@@ -138,14 +138,14 @@ function StudentContent() {
             </h2>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <a
-                href="/downloads/setup-client.ps1"
+                href="/downloads/setup-client.bat"
                 download
                 className="inline-flex items-center gap-3 bg-accent text-white px-8 py-4 rounded-md text-lg font-bold hover:bg-accent-dark transition"
               >
                 <Download size={20} />
-                setup-client.ps1 다운로드
+                setup-client.bat 다운로드
               </a>
-              <span className="text-sm text-caption">Windows PowerShell 전용</span>
+              <span className="text-sm text-caption">Windows 전용 &middot; 더블클릭으로 실행</span>
             </div>
           </div>
 
@@ -160,27 +160,29 @@ function StudentContent() {
               <li className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">1</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-heading mb-2">다운로드 폴더에서 PowerShell 열기</p>
+                  <p className="font-semibold text-heading mb-2">다운로드된 파일 2개를 같은 폴더에 둡니다</p>
                   <p className="text-sm text-body mb-2">
-                    파일 탐색기에서 <strong>Downloads</strong> 폴더를 열고, 주소창에 <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">powershell</code>을 입력하고 Enter
+                    <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">setup-client.bat</code>과
+                    <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">setup-client.ps1</code>이
+                    같은 폴더(보통 Downloads)에 있어야 합니다.
                   </p>
+                  <a
+                    href="/downloads/setup-client.ps1"
+                    download
+                    className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+                  >
+                    <Download size={12} />
+                    setup-client.ps1도 다운로드
+                  </a>
                 </div>
               </li>
 
               <li className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">2</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-heading mb-2">아래 명령어를 붙여넣고 Enter</p>
-                  <div className="bg-[#1a1f36] rounded-lg p-4 font-mono text-sm text-white relative group">
-                    <div className="absolute top-2 right-2">
-                      <CopyButton text='powershell -ExecutionPolicy Bypass -File ./setup-client.ps1 -Name "내이름"' />
-                    </div>
-                    <code>
-                      <span className="text-green-400">powershell</span> -ExecutionPolicy Bypass -File ./setup-client.ps1 -Name <span className="text-yellow-300">&quot;내이름&quot;</span>
-                    </code>
-                  </div>
-                  <p className="text-xs text-caption mt-2">
-                    &quot;내이름&quot; 부분을 본인 이름으로 바꾸세요 (예: &quot;김철수&quot;)
+                  <p className="font-semibold text-heading mb-2">setup-client.bat을 더블클릭</p>
+                  <p className="text-sm text-body mb-2">
+                    파란 보안 경고가 뜨면 <strong>&ldquo;추가 정보&rdquo;</strong> &rarr; <strong>&ldquo;실행&rdquo;</strong>을 클릭하세요.
                   </p>
                 </div>
               </li>
@@ -188,15 +190,25 @@ function StudentContent() {
               <li className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">3</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-heading mb-2">&quot;대기 중&quot;이 나오면 완료</p>
+                  <p className="font-semibold text-heading mb-2">이름을 입력하고 Enter</p>
+                  <p className="text-sm text-body mb-2">
+                    강사가 여러분을 구분할 이름을 입력하세요 (예: 김철수)
+                  </p>
+                </div>
+              </li>
+
+              <li className="flex items-start gap-4">
+                <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">4</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-heading mb-2">&ldquo;Waiting...&rdquo;이 나오면 완료</p>
                   <div className="bg-[#1a1f36] rounded-lg p-4 font-mono text-sm text-gray-300">
-                    <pre className="whitespace-pre">{`─────────────────────────────────────────────
+                    <pre className="whitespace-pre">{`---------------------------------------------
   managerkim-setup v1.0 (PowerShell)
-  연결: 38.45.67.130:1664/ws
-  세션: 김철수
-  상태: ⏳ 대기 중
-─────────────────────────────────────────────
-  Ctrl+C로 종료`}</pre>
+  server: 38.45.67.130:1664/ws
+  session: 김철수
+  status: Waiting...
+---------------------------------------------
+  Ctrl+C to quit`}</pre>
                   </div>
                   <p className="text-xs text-caption mt-2">
                     이 화면이 나오면 강사의 지시를 기다리세요. 창을 닫지 마세요.
