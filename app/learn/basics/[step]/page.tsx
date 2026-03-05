@@ -10,16 +10,18 @@ import Chapter4 from "./chapters/Chapter4";
 import Chapter5 from "./chapters/Chapter5";
 import Chapter6 from "./chapters/Chapter6";
 import Chapter7 from "./chapters/Chapter7";
+import Chapter8 from "./chapters/Chapter8";
 import Link from "next/link";
 
 const chapterComponents: Record<number, React.ComponentType> = {
-  1: Chapter1,
-  2: Chapter2,
-  3: Chapter3,
-  4: Chapter4,
-  5: Chapter5,
-  6: Chapter6,
-  7: Chapter7,
+  1: Chapter1,  // 에이전틱 AI란?
+  2: Chapter2,  // 세팅
+  3: Chapter8,  // Playwright 웹 자동화 (NEW)
+  4: Chapter3,  // Gmail 자동화
+  5: Chapter4,  // 엑셀 자동화
+  6: Chapter5,  // PPT + 바이브코딩
+  7: Chapter6,  // 마무리
+  8: Chapter7,  // 텔레그램 연동
 };
 
 export default function ChapterPage() {

@@ -65,14 +65,32 @@ export const chapters: Chapter[] = [
   },
   {
     id: 3,
+    slug: "playwright",
+    title: "실습 1: 웹 자동화 (Playwright)",
+    description: "브라우저를 AI가 직접 조종 + Google 인증",
+    emoji: "🌐",
+    sections: [
+      { id: "situation", title: "매일 반복하는 웹 작업들" },
+      { id: "what-is-playwright", title: "Playwright란?" },
+      { id: "install", title: "Playwright 설치하기" },
+      { id: "first-run", title: "첫 실행: 웹 페이지 열어보기" },
+      { id: "google-auth", title: "Google 인증 쉽게 하기" },
+      { id: "real-example", title: "실전: 웹에서 데이터 수집" },
+      { id: "use-cases", title: "이런 것도 가능해요" },
+      { id: "try-it", title: "직접 해보기" },
+      { id: "recap", title: "정리" },
+    ],
+  },
+  {
+    id: 4,
     slug: "gmail",
-    title: "실습 1: Gmail 자동화",
+    title: "실습 2: Gmail 자동화",
     description: "메일 분류 + 자동 읽음처리 + 답장 초안",
     emoji: "📧",
     sections: [
       { id: "situation", title: "상황: 아침마다 메일함과 씨름" },
       { id: "pipeline", title: "만들 자동화 파이프라인" },
-      { id: "google-api", title: "Google API 준비" },
+      { id: "google-api", title: "Google API 준비 (2가지 방법)" },
       { id: "prompt", title: "프롬프트 작성" },
       { id: "expected", title: "단계별 실행 화면" },
       { id: "prompt-tips", title: "프롬프트 잘 쓰는 3가지 공식" },
@@ -82,9 +100,9 @@ export const chapters: Chapter[] = [
     ],
   },
   {
-    id: 4,
+    id: 5,
     slug: "excel",
-    title: "실습 2: 엑셀 자동화",
+    title: "실습 3: 엑셀 자동화",
     description: "데이터 집계 + 요약표 + 차트 자동 생성",
     emoji: "📊",
     sections: [
@@ -95,9 +113,9 @@ export const chapters: Chapter[] = [
     ],
   },
   {
-    id: 5,
+    id: 6,
     slug: "ppt",
-    title: "실습 3: PPT 자동화 + 바이브코딩",
+    title: "실습 4: PPT 자동화 + 바이브코딩",
     description: "슬라이드 자동 구성 + 말로 만드는 프로그래밍",
     emoji: "🎤",
     sections: [
@@ -109,7 +127,7 @@ export const chapters: Chapter[] = [
     ],
   },
   {
-    id: 6,
+    id: 7,
     slug: "next",
     title: "마무리",
     description: "요금제 비교 + 다음 스텝",
@@ -124,7 +142,7 @@ export const chapters: Chapter[] = [
     ],
   },
   {
-    id: 7,
+    id: 8,
     slug: "telegram",
     title: "텔레그램 연동",
     description: "코깍딜로 어디서든 AI 원격 조종",

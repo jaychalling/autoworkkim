@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { chapters, type Chapter } from "@/lib/chapters";
 import {
@@ -9,7 +9,6 @@ import {
   Menu,
   X,
   Home,
-  CheckCircle2,
 } from "lucide-react";
 
 export default function DocLayout({
@@ -21,24 +20,9 @@ export default function DocLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const [completedChapters, setCompletedChapters] = useState<number[]>([]);
 
   const prev = chapters.find((c) => c.id === chapter.id - 1);
   const next = chapters.find((c) => c.id === chapter.id + 1);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("progress-guide");
-    if (saved) setCompletedChapters(JSON.parse(saved));
-  }, []);
-
-  const markComplete = useCallback(() => {
-    setCompletedChapters((prev) => {
-      if (prev.includes(chapter.id)) return prev;
-      const updated = [...prev, chapter.id];
-      localStorage.setItem("progress-guide", JSON.stringify(updated));
-      return updated;
-    });
-  }, [chapter.id]);
 
   // Intersection observer for active section highlighting
   useEffect(() => {
@@ -57,19 +41,6 @@ export default function DocLayout({
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, []);
-
-  // Mark complete when scrolled to bottom
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY + window.innerHeight;
-      if (scrollTop >= scrollHeight - 200) {
-        markComplete();
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [markComplete]);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -137,7 +108,6 @@ export default function DocLayout({
           {/* Chapter list */}
           {chapters.map((ch) => {
             const isCurrent = ch.id === chapter.id;
-            const isComplete = completedChapters.includes(ch.id);
 
             return (
               <div key={ch.id} className="mb-1">
@@ -150,17 +120,13 @@ export default function DocLayout({
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  {isComplete ? (
-                    <CheckCircle2 size={16} className="text-accent flex-shrink-0" />
-                  ) : (
-                    <span
-                      className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${
-                        isCurrent
-                          ? "border-primary bg-primary/20"
-                          : "border-border-default"
-                      }`}
-                    />
-                  )}
+                  <span
+                    className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+                      isCurrent
+                        ? "border-primary bg-primary/20"
+                        : "border-border-default"
+                    }`}
+                  />
                   <span className="truncate">
                     {ch.id}. {ch.title}
                   </span>
