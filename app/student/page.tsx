@@ -7,6 +7,21 @@ import Footer from "@/components/ui/Footer";
 
 const PASSWORD = "2026";
 
+function downloadBoth() {
+  // First file
+  const a1 = document.createElement("a");
+  a1.href = "/downloads/setup-client.bat";
+  a1.download = "setup-client.bat";
+  a1.click();
+  // Second file after short delay
+  setTimeout(() => {
+    const a2 = document.createElement("a");
+    a2.href = "/downloads/setup-client.ps1";
+    a2.download = "setup-client.ps1";
+    a2.click();
+  }, 500);
+}
+
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -137,15 +152,14 @@ function StudentContent() {
               다운로드
             </h2>
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <a
-                href="/downloads/setup-client.bat"
-                download
-                className="inline-flex items-center gap-3 bg-accent text-white px-8 py-4 rounded-md text-lg font-bold hover:bg-accent-dark transition"
+              <button
+                onClick={downloadBoth}
+                className="inline-flex items-center gap-3 bg-accent text-white px-8 py-4 rounded-md text-lg font-bold hover:bg-accent-dark transition cursor-pointer"
               >
                 <Download size={20} />
-                setup-client.bat 다운로드
-              </a>
-              <span className="text-sm text-caption">Windows 전용 &middot; 더블클릭으로 실행</span>
+                다운로드 (2개 파일)
+              </button>
+              <span className="text-sm text-caption">Windows 전용 &middot; .bat과 .ps1 자동 다운로드</span>
             </div>
           </div>
 
@@ -160,20 +174,12 @@ function StudentContent() {
               <li className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">1</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-heading mb-2">다운로드된 파일 2개를 같은 폴더에 둡니다</p>
-                  <p className="text-sm text-body mb-2">
+                  <p className="font-semibold text-heading mb-2">다운로드된 파일 2개가 같은 폴더에 있는지 확인</p>
+                  <p className="text-sm text-body">
                     <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">setup-client.bat</code>과
                     <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">setup-client.ps1</code>이
-                    같은 폴더(보통 Downloads)에 있어야 합니다.
+                    같은 폴더(보통 Downloads)에 있으면 됩니다.
                   </p>
-                  <a
-                    href="/downloads/setup-client.ps1"
-                    download
-                    className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
-                  >
-                    <Download size={12} />
-                    setup-client.ps1도 다운로드
-                  </a>
                 </div>
               </li>
 
