@@ -290,7 +290,7 @@ export default function Chapter1() {
         />
 
         <p>
-          <strong>전화 상담원</strong>을 생각해보세요. 아무리 똑똒해도, 전화로만
+          <strong>전화 상담원</strong>을 생각해보세요. 아무리 똑똑해도, 전화로만
           소통할 수 있잖아요. &ldquo;서류 좀 정리해주세요&rdquo;라고 하면
           &ldquo;이렇게 하시면 됩니다&rdquo;라고 안내는 해주지만, 직접 와서
           서류를 정리해주지는 못하거든요.

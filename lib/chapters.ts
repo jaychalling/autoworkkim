@@ -126,8 +126,8 @@ export const chapters: Chapter[] = [
   {
     id: 7,
     slug: "telegram",
-    title: "보강: 텔레그램 연동",
-    description: "어디서든 AI 원격 조종 — 코깍딜로 안전하게",
+    title: "텔레그램 연동",
+    description: "코깍딜로 어디서든 AI 원격 조종",
     emoji: "💬",
     sections: [
       { id: "why-remote", title: "밖에서도 AI를 쓰고 싶다" },

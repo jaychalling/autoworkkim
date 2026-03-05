@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { chapters } from "@/lib/chapters";
-import { ChevronRight, Home, BookOpen, CheckCircle2 } from "lucide-react";
+import { ChevronRight, CheckCircle2 } from "lucide-react";
 import NavBar from "@/components/ui/NavBar";
 import Footer from "@/components/ui/Footer";
 import SectionBadge from "@/components/ui/SectionBadge";
@@ -25,22 +25,14 @@ export default function LearnPage() {
       {/* Header */}
       <section className="pt-32 pb-12 px-6">
         <div className="max-w-3xl mx-auto">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-caption hover:text-heading transition mb-6"
-          >
-            <Home size={18} />
-            <span className="text-sm">홈으로</span>
-          </Link>
-
-          <SectionBadge>학습 가이드</SectionBadge>
+          <SectionBadge>Step-by-Step Guide</SectionBadge>
 
           <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-heading mt-4 mb-2">
-            AI 업무 자동화 가이드
+            Step by Step, AI 시대가 원하는 인재로
           </h1>
           <p className="text-body text-lg">
-            에이전틱 AI의 개념부터 Gmail, 엑셀, PPT 자동화까지 — 코딩 경험 없이
-            따라할 수 있는 실전 가이드
+            모든 Step을 따라가면 AI 시대에 딱 맞는 인재가 될 수 있어요.
+            코딩 경험 없이, 하나씩 따라오세요.
           </p>
 
           {/* Overall progress */}
@@ -49,7 +41,7 @@ export default function LearnPage() {
               <div className="flex items-center justify-between text-sm text-caption mb-2">
                 <span>전체 진행률</span>
                 <span>
-                  {completed.length}/{chapters.length} 챕터 완료
+                  {completed.length}/{chapters.length} Steps 완료
                 </span>
               </div>
               <div className="h-2 bg-border-subtle rounded-full overflow-hidden">
@@ -79,13 +71,13 @@ export default function LearnPage() {
                   {/* Number / Check */}
                   <div className="flex-shrink-0">
                     {isComplete ? (
-                      <div className="w-10 h-10 rounded-md bg-accent-light flex items-center justify-center">
+                      <div className="w-12 h-10 rounded-md bg-accent-light flex items-center justify-center">
                         <CheckCircle2 size={22} className="text-accent" />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-md bg-subtle flex items-center justify-center transition">
-                        <span className="text-sm font-bold text-caption group-hover:text-heading transition">
-                          {ch.id}
+                      <div className="w-12 h-10 rounded-md bg-subtle flex items-center justify-center transition">
+                        <span className="text-xs font-bold text-caption group-hover:text-heading transition">
+                          Step {ch.id}
                         </span>
                       </div>
                     )}
@@ -114,8 +106,7 @@ export default function LearnPage() {
           {/* Footer note */}
           <div className="mt-12 text-center">
             <p className="text-caption text-sm">
-              더 많은 코스가 준비 중이에요 — Gmail 심화, 엑셀 마스터, 업무
-              파이프라인 구축
+              새로운 Step이 계속 추가될 예정이에요
             </p>
           </div>
         </div>

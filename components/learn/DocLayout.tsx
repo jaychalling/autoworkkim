@@ -196,7 +196,7 @@ export default function DocLayout({
           {/* Chapter header */}
           <div className="mb-10">
             <p className="text-sm font-medium text-primary mb-2">
-              챕터 {chapter.id} / {chapters.length}
+              Step {chapter.id} / {chapters.length}
             </p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-heading mb-2">
               {chapter.emoji} {chapter.title}
