@@ -7,38 +7,34 @@ import CompareTable from "@/components/learn/CompareTable";
 export default function Chapter7() {
   return (
     <>
-      {/* ── 왜 원격이 필요한가 ── */}
-      <section id="why-remote">
+      {/* ── 사전 준비 ── */}
+      <section id="install-overview">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          밖에서도 AI를 쓰고 싶다
+          사전 준비 &mdash; 이미 다 있습니다
         </h2>
         <p className="text-body leading-relaxed mb-4">
-          지금까지 우리는 집이나 사무실 PC의 터미널에서 Claude Code를 사용했습니다.
-          그런데 이런 순간이 있지 않나요?
+          밖에서도 AI를 쓰고 싶지 않나요? 출근길 지하철에서, 카페에서, 자기 전에&mdash;스마트폰 하나로
+          집 PC의 Claude Code를 원격 조종할 수 있습니다. 해결책은 <strong>텔레그램 봇 연동</strong>이에요.
         </p>
 
-        <div className="grid gap-3 my-6">
-          {[
-            { icon: "🚇", text: "출근길 지하철에서 간단히 지시하고 싶을 때" },
-            { icon: "☕", text: "카페에서 보고서 작성을 맡기고 싶을 때" },
-            { icon: "🌙", text: "자기 전에 내일 할 일을 미리 맡겨놓고 싶을 때" },
-            { icon: "📱", text: "스마트폰만 있는데 AI에게 일을 시키고 싶을 때" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-accent-light border border-accent/30 rounded-xl px-4 py-3"
-            >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
-              <span className="text-body">{item.text}</span>
-            </div>
-          ))}
+        <div className="grid md:grid-cols-2 gap-4 my-6">
+          <div className="bg-subtle rounded-xl p-5">
+            <p className="font-bold text-heading mb-3">✅ 이미 설치 완료</p>
+            <ul className="text-body space-y-2 text-sm">
+              <li>✅ Windows PC</li>
+              <li>✅ Claude Code (CLI)</li>
+              <li>✅ Claude Pro 구독 &amp; 로그인</li>
+            </ul>
+          </div>
+          <div className="bg-accent-light border border-accent/30 rounded-xl p-5">
+            <p className="font-bold text-heading mb-3">📋 오늘 할 것</p>
+            <ul className="text-body space-y-2 text-sm">
+              <li>1️⃣ 텔레그램 봇 토큰 발급</li>
+              <li>2️⃣ 코깍딜 다운로드</li>
+              <li>3️⃣ 봇 서버 실행 &rarr; 끝!</li>
+            </ul>
+          </div>
         </div>
-
-        <p className="text-body leading-relaxed mb-4">
-          해결책은 <strong>메신저 연동</strong>입니다.
-          텔레그램에 메시지를 보내면, 집 PC의 Claude Code가 실행되고,
-          결과를 텔레그램으로 다시 보내줍니다.
-        </p>
 
         <Callout type="info" title="왜 텔레그램?">
           <p>
@@ -48,70 +44,140 @@ export default function Chapter7() {
         </Callout>
       </section>
 
-      {/* ── OpenClaw vs 코깍딜 ── */}
-      <section id="openclaw-vs-cokacdir" className="mt-16">
+      {/* ── STEP 1: 봇 토큰 ── */}
+      <section id="step1-token" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          OpenClaw vs 코깍딜
+          STEP 1: 텔레그램 봇 토큰 발급
         </h2>
-        <p className="text-body leading-relaxed mb-6">
-          텔레그램과 Claude Code를 연결하는 방법은 크게 두 가지입니다.
+
+        <h3 className="text-lg font-semibold text-heading mb-3 mt-6">
+          📁 작업 폴더 만들기
+        </h3>
+        <p className="text-body leading-relaxed mb-4">
+          먼저 코깍딜 파일과 AI 대화 기록이 저장될 폴더를 하나 만드세요.
         </p>
+        <div className="grid gap-3 my-6">
+          {[
+            { step: "1", text: "파일 탐색기에서 원하는 위치에 폴더 만들기 (예: my-ai-bot)" },
+            { step: "2", text: "폴더 안에서 주소창 클릭 → powershell 입력 → Enter" },
+            { step: "3", text: "열린 PowerShell에서 claude 입력 → Claude Code 시작!" },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-3 bg-subtle rounded-xl px-4 py-3"
+            >
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-accent text-white text-sm font-bold flex items-center justify-center">
+                {item.step}
+              </span>
+              <span className="text-body">{item.text}</span>
+            </div>
+          ))}
+        </div>
 
-        <CompareTable
-          headers={["", "🐾 OpenClaw", "🤖 코깍딜"]}
-          rows={[
-            ["설명", "오픈소스 메신저 AI 에이전트", "Claude Agent SDK 기반 텔레그램 연동"],
-            ["인증 방식", "내 로그인 정보를 제3자에 전달", "내 PC에서 직접 로그인"],
-            ["실행 위치", "제3자 서버에서 내 계정 사용", "내 PC에서 Claude CLI 직접 호출"],
-            ["Anthropic 정책", "⚠️ 위반 (공식 금지)", "✅ 준수 (공식 CLI 사용)"],
-            ["보안", "정보 유출 · 폭주 위험", "로그인 정보가 내 PC에만 존재"],
-            ["계정 안전", "차단 가능성 있음", "안전"],
-          ]}
-        />
+        <h3 className="text-lg font-semibold text-heading mb-3">
+          📱 텔레그램 설치
+        </h3>
+        <ol className="list-decimal pl-5 text-body space-y-2 mb-6">
+          <li>스마트폰 앱스토어에서 &quot;Telegram&quot; 설치</li>
+          <li>PC: telegram.org &rarr; 데스크탑 앱 설치</li>
+          <li>전화번호로 가입</li>
+        </ol>
 
-        <Callout type="warning" title="결론">
+        <h3 className="text-lg font-semibold text-heading mb-3">
+          🤖 봇 토큰 발급
+        </h3>
+        <ol className="list-decimal pl-5 text-body space-y-2 mb-6">
+          <li><strong>@BotFather</strong> 검색 &rarr; START BOT</li>
+          <li><code>/newbot</code> 입력</li>
+          <li>봇 이름 설정 (예: 내 AI 비서)</li>
+          <li>유저네임 설정 (예: myai_helper_bot) &mdash; 반드시 <code>_bot</code>으로 끝나야 함</li>
+          <li>발급된 토큰을 복사해두기!</li>
+        </ol>
+
+        <Callout type="warning" title="토큰은 비밀번호입니다">
           <p>
-            OpenClaw은 편리하지만 <strong>정책 위반</strong>으로 계정이 차단될 수 있습니다.
-            이 가이드에서는 안전한 <strong>코깍딜</strong>을 사용합니다.
+            봇 토큰은 <code>7123456789:AAH...</code> 형식의 긴 문자열입니다.
+            이 토큰을 가진 사람은 봇을 제어할 수 있으니, 절대 공개하지 마세요.
           </p>
         </Callout>
       </section>
 
-      {/* ── OpenClaw 위험성 ── */}
-      <section id="openclaw-danger" className="mt-16">
+      {/* ── STEP 2: 다운로드 ── */}
+      <section id="step2-download" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          OpenClaw의 치명적 문제
+          STEP 2: 코깍딜 다운로드
         </h2>
         <p className="text-body leading-relaxed mb-4">
-          OpenClaw의 핵심 문제는 <strong>내 Claude Pro 구독 인증을 제3자 프로그램에 넘기는 것</strong>입니다.
-          마치 내 신용카드를 모르는 사람에게 빌려주는 것과 같아요.
+          Claude Code에게 시키면 끝입니다. STEP 1에서 열어둔 Claude Code에
+          아래 내용을 입력하세요.
         </p>
 
-        <div className="grid gap-3 my-6">
-          {[
-            { icon: "🚫", title: "계정 차단", desc: "Anthropic이 공식적으로 Free, Pro, Max 계정의 OAuth 토큰을 제3자 도구에서 사용하는 것을 금지했습니다." },
-            { icon: "🔓", title: "보안 위험", desc: "타인이 내 계정으로 API를 호출할 수 있으며, 공개 Discord 서버에서 파일 시스템 탐색 사례가 보고되었습니다." },
-            { icon: "💸", title: "비용 폭탄", desc: "에이전트가 폭주하여 메시지 500건 이상을 무차별 발송한 실제 사고가 발생했습니다." },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 mb-3"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">{item.icon}</span>
-                <strong className="text-heading">{item.title}</strong>
-              </div>
-              <p className="text-body text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
+        <CodeBlock title="Claude Code에 입력">{`cokacdir를 다운로드 해줘.
+https://github.com/kstost/cokacdir 여기가 공식 저장소야.
+현재 폴더에 저장하고,
+현재 이 경로에서 새 PowerShell 창도 열어줘.`}</CodeBlock>
+
+        <p className="text-body leading-relaxed mt-4">
+          Claude Code가 승인을 요청하면 <strong>Y</strong>만 눌러주세요.
+          다운로드 + 새 PowerShell 창 열기까지 자동으로 완료됩니다.
+        </p>
       </section>
 
-      {/* ── 코깍딜이란? ── */}
-      <section id="what-is-cokacdir" className="mt-16">
+      {/* ── STEP 3: 실행 ── */}
+      <section id="step3-run" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          코깍딜이란?
+          STEP 3: 봇 서버 실행
         </h2>
+        <p className="text-body leading-relaxed mb-4">
+          이것만 직접 실행합니다. Claude Code가 열어준 <strong>새 PowerShell 창</strong>에서 아래 명령을 입력하세요.
+        </p>
+
+        <CodeBlock title="PowerShell">{`.\\cokacdir.exe --ccserver <봇토큰붙여넣기>
+
+# 예시:
+.\\cokacdir.exe --ccserver 7123456789:AAH_abcdefg...`}</CodeBlock>
+
+        <p className="text-body leading-relaxed mt-4 mb-4">
+          처음 실행 시 &ldquo;터미널(앱)에서 열기&rdquo;를 선택하세요.
+          지난 시간에 로그인한 Claude Pro 계정이 자동으로 연결됩니다.
+        </p>
+
+        <Callout type="info" title="왜 이것만 직접 실행하나요?">
+          <p>
+            코깍딜은 터미널 화면(TUI)을 사용하는 앱이라 Claude Code 안에서는 실행이 안 됩니다.
+            별도 PowerShell 창에서 직접 실행해야 합니다.
+          </p>
+        </Callout>
+      </section>
+
+      {/* ── 테스트 ── */}
+      <section id="test" className="mt-16">
+        <h2 className="text-2xl font-bold text-heading mb-4">
+          테스트해보기
+        </h2>
+        <p className="text-body leading-relaxed mb-4">
+          봇 서버가 실행되면, 텔레그램에서 아까 만든 봇에게 메시지를 보내보세요.
+        </p>
+
+        <CodeBlock title="텔레그램에서 보내볼 메시지">{`안녕! 넌 누구야?
+오늘 날씨 알려줘
+현재 폴더에 있는 파일 목록 보여줘`}</CodeBlock>
+
+        <p className="text-body leading-relaxed mt-4 mb-4">
+          내 PC의 Claude Code가 메시지를 받으면 웹 검색, 파일 읽기/쓰기,
+          코드 실행, 보고서 생성까지 수행하고 결과를 텔레그램으로 돌려보냅니다.
+        </p>
+      </section>
+
+      {/* ── 이해하기: 코깍딜이란? ── */}
+      <section id="why-cokacdir" className="mt-16">
+        <h2 className="text-2xl font-bold text-heading mb-4">
+          이해하기: 코깍딜이란?
+        </h2>
+        <p className="text-body leading-relaxed mb-4">
+          봇이 동작하는 걸 확인했으니, 이게 어떤 원리인지 알아볼게요.
+        </p>
+
         <p className="text-body leading-relaxed mb-4">
           코깍딜(cokacdir)은 <strong>Claude Agent SDK 기반</strong>의 텔레그램 연동 도구입니다.
           내 PC에서 내 Claude 계정으로 직접 로그인해서 사용하기 때문에 정책을 100% 준수합니다.
@@ -123,48 +189,11 @@ export default function Chapter7() {
             로그인 정보가 내 PC에만 존재하고, 제3자에게 넘기지 않습니다.
           </p>
         </Callout>
-      </section>
 
-      {/* ── 인증 방식 차이 ── */}
-      <section id="auth-diff" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          핵심 차이: 인증 방식
-        </h2>
-        <p className="text-body leading-relaxed mb-6">
-          비유로 이해하면 쉽습니다.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-4 my-6">
-          <div className="bg-red-50 border border-red-200 rounded-xl p-5">
-            <p className="font-bold text-heading mb-2">🐾 OpenClaw</p>
-            <p className="text-body text-sm mb-3">
-              💳 신용카드를 모르는 사람에게 빌려주고 &quot;대신 쇼핑해 주세요&quot;
-            </p>
-            <ul className="text-sm text-body space-y-1">
-              <li>얼마를 쓸지 모름</li>
-              <li>어디서 쓸지 모름</li>
-              <li>내 통제 범위 밖</li>
-            </ul>
-          </div>
-          <div className="bg-accent-light border border-accent/30 rounded-xl p-5">
-            <p className="font-bold text-heading mb-2">🤖 코깍딜</p>
-            <p className="text-body text-sm mb-3">
-              🏠 집 안의 내 금고에서 내가 직접 꺼내 쓰고 &quot;열쇠는 내가 갖고 있다&quot;
-            </p>
-            <ul className="text-sm text-body space-y-1">
-              <li>토큰이 내 PC에만 존재</li>
-              <li>내가 완전히 통제</li>
-              <li>추가 비용 없음</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 구조 이해 ── */}
-      <section id="architecture" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          코깍딜 구조 이해하기
-        </h2>
+        {/* 구조 흐름 */}
+        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
+          동작 흐름
+        </h3>
         <p className="text-body leading-relaxed mb-4">
           내 Windows PC에서 바로 동작합니다. WSL 없이도 됩니다.
         </p>
@@ -198,170 +227,94 @@ export default function Chapter7() {
             WSL이나 Tailscale 같은 추가 설치가 필요 없어요.
           </p>
         </Callout>
-      </section>
 
-      {/* ── 설치 준비 ── */}
-      <section id="install-overview" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          설치 준비 — 이미 다 있습니다
-        </h2>
+        {/* OpenClaw 비교 */}
+        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
+          OpenClaw vs 코깍딜
+        </h3>
+        <p className="text-body leading-relaxed mb-6">
+          텔레그램과 Claude Code를 연결하는 방법은 크게 두 가지입니다.
+        </p>
 
-        <div className="grid md:grid-cols-2 gap-4 my-6">
-          <div className="bg-subtle rounded-xl p-5">
-            <p className="font-bold text-heading mb-3">✅ 이미 설치 완료</p>
-            <ul className="text-body space-y-2 text-sm">
-              <li>✅ Windows PC</li>
-              <li>✅ Claude Code (CLI)</li>
-              <li>✅ Claude Pro 구독 &amp; 로그인</li>
-            </ul>
-          </div>
-          <div className="bg-accent-light border border-accent/30 rounded-xl p-5">
-            <p className="font-bold text-heading mb-3">📋 오늘 할 것</p>
-            <ul className="text-body space-y-2 text-sm">
-              <li>0️⃣ 작업 폴더 만들기</li>
-              <li>1️⃣ 텔레그램 봇 토큰 발급</li>
-              <li>2️⃣ 코깍딜 다운로드</li>
-              <li>3️⃣ 봇 서버 실행 → 끝!</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+        <CompareTable
+          headers={["", "🐾 OpenClaw", "🤖 코깍딜"]}
+          rows={[
+            ["설명", "오픈소스 메신저 AI 에이전트", "Claude Agent SDK 기반 텔레그램 연동"],
+            ["인증 방식", "내 로그인 정보를 제3자에 전달", "내 PC에서 직접 로그인"],
+            ["실행 위치", "제3자 서버에서 내 계정 사용", "내 PC에서 Claude CLI 직접 호출"],
+            ["Anthropic 정책", "⚠️ 위반 (공식 금지)", "✅ 준수 (공식 CLI 사용)"],
+            ["보안", "정보 유출 · 폭주 위험", "로그인 정보가 내 PC에만 존재"],
+            ["계정 안전", "차단 가능성 있음", "안전"],
+          ]}
+        />
 
-      {/* ── STEP 0: 작업 폴더 ── */}
-      <section id="step0-folder" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          STEP 0: 작업 폴더 만들기
-        </h2>
+        {/* OpenClaw 위험성 */}
+        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
+          OpenClaw의 치명적 문제
+        </h3>
         <p className="text-body leading-relaxed mb-4">
-          모든 작업의 시작점입니다. 코깍딜 실행 파일, AI 대화 기록, 봇이 생성한 파일이
-          모두 이 폴더에 저장됩니다.
+          OpenClaw의 핵심 문제는 <strong>내 Claude Pro 구독 인증을 제3자 프로그램에 넘기는 것</strong>입니다.
+          마치 내 신용카드를 모르는 사람에게 빌려주는 것과 같아요.
         </p>
 
         <div className="grid gap-3 my-6">
           {[
-            { step: "1", text: "파일 탐색기에서 원하는 위치에 폴더 만들기 (예: my-ai-bot)" },
-            { step: "2", text: "폴더 안에서 주소창 클릭 → powershell 입력 → Enter" },
-            { step: "3", text: "열린 PowerShell에서 claude 입력 → Claude Code 시작!" },
+            { icon: "🚫", title: "계정 차단", desc: "Anthropic이 공식적으로 Free, Pro, Max 계정의 OAuth 토큰을 제3자 도구에서 사용하는 것을 금지했습니다." },
+            { icon: "🔓", title: "보안 위험", desc: "타인이 내 계정으로 API를 호출할 수 있으며, 공개 Discord 서버에서 파일 시스템 탐색 사례가 보고되었습니다." },
+            { icon: "💸", title: "비용 폭탄", desc: "에이전트가 폭주하여 메시지 500건 이상을 무차별 발송한 실제 사고가 발생했습니다." },
           ].map((item, i) => (
             <div
               key={i}
-              className="flex items-start gap-3 bg-subtle rounded-xl px-4 py-3"
+              className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 mb-3"
             >
-              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-accent text-white text-sm font-bold flex items-center justify-center">
-                {item.step}
-              </span>
-              <span className="text-body">{item.text}</span>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">{item.icon}</span>
+                <strong className="text-heading">{item.title}</strong>
+              </div>
+              <p className="text-body text-sm">{item.desc}</p>
             </div>
           ))}
         </div>
 
-        <Callout type="tip" title="왜 작업 폴더가 필요한가요?">
+        <Callout type="warning" title="결론">
           <p>
-            이후 모든 STEP은 이 폴더 안에서 진행됩니다.
-            cokacdir.exe, AI 대화 기록, 봇이 생성한 결과 파일이 모두 여기에 저장돼요.
+            OpenClaw은 편리하지만 <strong>정책 위반</strong>으로 계정이 차단될 수 있습니다.
+            이 가이드에서는 안전한 <strong>코깍딜</strong>을 사용합니다.
           </p>
         </Callout>
-      </section>
 
-      {/* ── STEP 1: 봇 토큰 ── */}
-      <section id="step1-token" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          STEP 1: 텔레그램 봇 토큰 발급
-        </h2>
-
-        <h3 className="text-lg font-semibold text-heading mb-3 mt-6">
-          📱 텔레그램 설치
+        {/* 인증 방식 차이 */}
+        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
+          핵심 차이: 인증 방식
         </h3>
-        <ol className="list-decimal pl-5 text-body space-y-2 mb-6">
-          <li>스마트폰 앱스토어에서 &quot;Telegram&quot; 설치</li>
-          <li>PC: telegram.org → 데스크탑 앱 설치</li>
-          <li>전화번호로 가입</li>
-        </ol>
-
-        <h3 className="text-lg font-semibold text-heading mb-3">
-          🤖 봇 토큰 발급
-        </h3>
-        <ol className="list-decimal pl-5 text-body space-y-2 mb-6">
-          <li><strong>@BotFather</strong> 검색 → START BOT</li>
-          <li><code>/newbot</code> 입력</li>
-          <li>봇 이름 설정 (예: 내 AI 비서)</li>
-          <li>유저네임 설정 (예: myai_helper_bot) — 반드시 <code>_bot</code>으로 끝나야 함</li>
-          <li>발급된 토큰을 복사해두기!</li>
-        </ol>
-
-        <Callout type="warning" title="토큰은 비밀번호입니다">
-          <p>
-            봇 토큰은 <code>7123456789:AAH...</code> 형식의 긴 문자열입니다.
-            이 토큰을 가진 사람은 봇을 제어할 수 있으니, 절대 공개하지 마세요.
-          </p>
-        </Callout>
-      </section>
-
-      {/* ── STEP 2: 다운로드 ── */}
-      <section id="step2-download" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          STEP 2: 코깍딜 다운로드
-        </h2>
-        <p className="text-body leading-relaxed mb-4">
-          Claude Code에게 시키면 끝입니다. STEP 0에서 열어둔 Claude Code에
-          아래 내용을 입력하세요.
+        <p className="text-body leading-relaxed mb-6">
+          비유로 이해하면 쉽습니다.
         </p>
 
-        <CodeBlock title="Claude Code에 입력">{`cokacdir를 다운로드 해줘.
-https://github.com/kstost/cokacdir 여기가 공식 저장소야.
-현재 폴더에 저장하고,
-현재 이 경로에서 새 PowerShell 창도 열어줘.`}</CodeBlock>
-
-        <p className="text-body leading-relaxed mt-4">
-          Claude Code가 승인을 요청하면 <strong>Y</strong>만 눌러주세요.
-          다운로드 + 새 PowerShell 창 열기까지 자동으로 완료됩니다.
-        </p>
-      </section>
-
-      {/* ── STEP 3: 실행 ── */}
-      <section id="step3-run" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          STEP 3: 봇 서버 실행
-        </h2>
-        <p className="text-body leading-relaxed mb-4">
-          이것만 직접 실행합니다. Claude Code가 열어준 <strong>새 PowerShell 창</strong>에서 아래 명령을 입력하세요.
-        </p>
-
-        <CodeBlock title="PowerShell">{`.\\cokacdir.exe --ccserver <봇토큰붙여넣기>
-
-# 예시:
-.\\cokacdir.exe --ccserver 7123456789:AAH_abcdefg...`}</CodeBlock>
-
-        <p className="text-body leading-relaxed mt-4 mb-4">
-          처음 실행 시 &quot;터미널(앱)에서 열기&quot;를 선택하세요.
-          지난 시간에 로그인한 Claude Pro 계정이 자동으로 연결됩니다.
-        </p>
-
-        <Callout type="info" title="왜 이것만 직접 실행하나요?">
-          <p>
-            코깍딜은 터미널 화면(TUI)을 사용하는 앱이라 Claude Code 안에서는 실행이 안 됩니다.
-            별도 PowerShell 창에서 직접 실행해야 합니다.
-          </p>
-        </Callout>
-      </section>
-
-      {/* ── 테스트 ── */}
-      <section id="test" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          테스트해보기
-        </h2>
-        <p className="text-body leading-relaxed mb-4">
-          봇 서버가 실행되면, 텔레그램에서 아까 만든 봇에게 메시지를 보내보세요.
-        </p>
-
-        <CodeBlock title="텔레그램에서 보내볼 메시지">{`안녕! 넌 누구야?
-오늘 날씨 알려줘
-현재 폴더에 있는 파일 목록 보여줘`}</CodeBlock>
-
-        <p className="text-body leading-relaxed mt-4 mb-4">
-          내 PC의 Claude Code가 메시지를 받으면 웹 검색, 파일 읽기/쓰기,
-          코드 실행, 보고서 생성까지 수행하고 결과를 텔레그램으로 돌려보냅니다.
-        </p>
+        <div className="grid md:grid-cols-2 gap-4 my-6">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+            <p className="font-bold text-heading mb-2">🐾 OpenClaw</p>
+            <p className="text-body text-sm mb-3">
+              💳 신용카드를 모르는 사람에게 빌려주고 &quot;대신 쇼핑해 주세요&quot;
+            </p>
+            <ul className="text-sm text-body space-y-1">
+              <li>얼마를 쓸지 모름</li>
+              <li>어디서 쓸지 모름</li>
+              <li>내 통제 범위 밖</li>
+            </ul>
+          </div>
+          <div className="bg-accent-light border border-accent/30 rounded-xl p-5">
+            <p className="font-bold text-heading mb-2">🤖 코깍딜</p>
+            <p className="text-body text-sm mb-3">
+              🏠 집 안의 내 금고에서 내가 직접 꺼내 쓰고 &quot;열쇠는 내가 갖고 있다&quot;
+            </p>
+            <ul className="text-sm text-body space-y-1">
+              <li>토큰이 내 PC에만 존재</li>
+              <li>내가 완전히 통제</li>
+              <li>추가 비용 없음</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       {/* ── 트러블슈팅: Invalid API key ── */}
@@ -381,8 +334,8 @@ https://github.com/kstost/cokacdir 여기가 공식 저장소야.
             Claude CLI는 인증을 이 순서로 확인합니다:
           </p>
           <ol className="list-decimal pl-5 mt-2 space-y-1">
-            <li><strong>환경변수 <code>ANTHROPIC_API_KEY</code></strong> — 있으면 무조건 이걸 사용</li>
-            <li><strong>OAuth 토큰</strong> (<code>.credentials.json</code>) — 환경변수가 없을 때만</li>
+            <li><strong>환경변수 <code>ANTHROPIC_API_KEY</code></strong> &mdash; 있으면 무조건 이걸 사용</li>
+            <li><strong>OAuth 토큰</strong> (<code>.credentials.json</code>) &mdash; 환경변수가 없을 때만</li>
           </ol>
           <p className="mt-2">
             즉, 예전에 설정한 잘못된/만료된 API 키가 남아있으면 정상적인 OAuth 로그인을 덮어씌웁니다.
@@ -398,7 +351,7 @@ https://github.com/kstost/cokacdir 여기가 공식 저장소야.
             <p className="font-bold text-heading mb-3">1단계: 환경변수 확인</p>
             <CodeBlock title="PowerShell">{`echo $env:ANTHROPIC_API_KEY`}</CodeBlock>
             <p className="text-body text-sm mt-2">
-              값이 출력되면 → 이게 범인입니다. 아무것도 안 나오면 2단계로.
+              값이 출력되면 &rarr; 이게 범인입니다. 아무것도 안 나오면 2단계로.
             </p>
           </div>
 
@@ -407,7 +360,7 @@ https://github.com/kstost/cokacdir 여기가 공식 저장소야.
             <CodeBlock title="PowerShell — 현재 세션에서 제거">{`$env:ANTHROPIC_API_KEY = ""`}</CodeBlock>
             <CodeBlock title="PowerShell — 영구 제거 (시스템 전체)">{`[System.Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", $null, "User")`}</CodeBlock>
             <p className="text-body text-sm mt-2">
-              또는 <strong>시스템 속성 → 환경변수</strong>에서 직접 <code>ANTHROPIC_API_KEY</code>를 찾아 삭제하세요.
+              또는 <strong>시스템 속성 &rarr; 환경변수</strong>에서 직접 <code>ANTHROPIC_API_KEY</code>를 찾아 삭제하세요.
             </p>
           </div>
 
@@ -450,7 +403,7 @@ https://github.com/kstost/cokacdir 여기가 공식 저장소야.
           </p>
           <p className="mt-2">
             Rust 프로그램은 <code>.cmd</code> 파일을 직접 실행할 수 없습니다.
-            마치 &quot;이 파일은 프로그램이 아닙니다&quot;라고 거부당하는 것이에요.
+            마치 &ldquo;이 파일은 프로그램이 아닙니다&rdquo;라고 거부당하는 것이에요.
           </p>
         </Callout>
 
@@ -560,7 +513,7 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
 
         <Callout type="info" title="Windows 시작 시 자동 실행하려면">
           <p>
-            <code>Win + R</code> → <code>shell:startup</code> 입력 → 열린 폴더에
+            <code>Win + R</code> &rarr; <code>shell:startup</code> 입력 &rarr; 열린 폴더에
             BAT 파일의 <strong>바로가기</strong>를 넣으세요.
             PC를 켤 때마다 봇이 자동으로 시작됩니다.
           </p>
@@ -569,9 +522,9 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
         <Callout type="warning" title="그래도 안 되면 이것을 확인하세요">
           <p>아래 5가지 결과를 확인하면 대부분의 문제를 진단할 수 있습니다:</p>
           <ol className="list-decimal pl-5 mt-2 space-y-1">
-            <li><code>claude --version</code> — CLI 버전 확인</li>
-            <li><code>echo $env:ANTHROPIC_API_KEY</code> — API 키 환경변수 확인</li>
-            <li><code>where.exe claude</code> — claude 실행 파일 경로 확인</li>
+            <li><code>claude --version</code> &mdash; CLI 버전 확인</li>
+            <li><code>echo $env:ANTHROPIC_API_KEY</code> &mdash; API 키 환경변수 확인</li>
+            <li><code>where.exe claude</code> &mdash; claude 실행 파일 경로 확인</li>
             <li>실행 BAT 파일 전체 내용</li>
             <li>코깍딜 실행 시 전체 에러 로그</li>
           </ol>
@@ -603,7 +556,7 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
 
         <Callout type="tip" title="지하철에서 보고서 완성">
           <p>
-            지하철에서 엑셀 보내면 → 집 PC가 분석해서 → 보고서가 텔레그램으로 도착합니다.
+            지하철에서 엑셀 보내면 &rarr; 집 PC가 분석해서 &rarr; 보고서가 텔레그램으로 도착합니다.
           </p>
         </Callout>
       </section>
@@ -632,7 +585,7 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
       {/* ── 활용 ③: 보고서 ── */}
       <section id="usecase-report" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          활용 ③: 한 줄 지시 → 완성된 보고서
+          활용 ③: 한 줄 지시 &rarr; 완성된 보고서
         </h2>
 
         <CodeBlock title="텔레그램에서">{`"2026년 AI 시장 동향 조사해서 보고서 만들어줘"
@@ -660,7 +613,7 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
             &quot;보고서 아카이빙 웹페이지를 만들어줘. 현재 폴더의 .html 파일들을 스캔해서
             제목, 날짜, 카테고리를 자동 추출하고, 카테고리별 필터가 있는 카드 리스트로 만들어.
             포트 5321로 dev 서버 띄워서 같은 와이파이의 폰에서도 볼 수 있게 해줘.&quot;
-            — 이렇게 길고 구체적인 지시도 한 번에 처리합니다.
+            &mdash; 이렇게 길고 구체적인 지시도 한 번에 처리합니다.
           </p>
         </Callout>
       </section>
@@ -668,7 +621,7 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
       {/* ── 활용 ④: 영수증 ── */}
       <section id="usecase-receipt" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          활용 ④: 영수증 → 자동 가계부
+          활용 ④: 영수증 &rarr; 자동 가계부
         </h2>
 
         <CodeBlock title="평소에 틈날 때마다">{`👤 [영수증 사진 📸]
@@ -761,10 +714,10 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
 
         <div className="grid gap-3 my-6">
           {[
-            "OpenClaw은 편리하지만 정책 위반 → 계정 차단 위험",
-            "핵심 차이는 인증 방식 — 로그인 정보를 제3자에게 vs 내 PC에서 직접",
             "코깍딜은 내 Windows PC에서 내 Pro 구독으로 직접 실행 → 정책 준수",
             "설치는 3단계 — 봇 만들기 → 코깍딜 설치 → 실행 → 끝!",
+            "OpenClaw은 편리하지만 정책 위반 → 계정 차단 위험",
+            "핵심 차이는 인증 방식 — 로그인 정보를 제3자에게 vs 내 PC에서 직접",
             "텔레그램 봇 하나면 어디서든 AI 원격 조종 가능",
           ].map((text, i) => (
             <div
@@ -783,7 +736,7 @@ start "MyBot" cokacdir.exe --ccserver 여기에봇토큰붙여넣기`}</CodeBloc
           <p>
             터미널 앞에서만 쓰던 AI를 이제 주머니에서 꺼내 쓰세요.
             텔레그램 하나로 파일 분석, 자동 스케줄, 웹 리서치, 보고서 생성,
-            코드 실행, 번역까지 — 모든 것이 가능합니다.
+            코드 실행, 번역까지 &mdash; 모든 것이 가능합니다.
           </p>
         </Callout>
       </section>

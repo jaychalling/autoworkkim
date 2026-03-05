@@ -7,86 +7,15 @@ import CompareTable from "@/components/learn/CompareTable";
 export default function Chapter4() {
   return (
     <>
-      {/* ── 상황 인식 ── */}
-      <section id="situation">
+      {/* ── 바로 실행하기 ── */}
+      <section id="execute">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          매주 반복되는 엑셀 지옥
+          바로 실행하기
         </h2>
         <p className="text-body leading-relaxed mb-4">
-          직장인이라면 이런 경험, 한 번쯤 있으시죠?
-          매주 월요일마다 똑같은 엑셀 작업을 반복하고 있다면,
-          사실 그 시간을 AI에게 맡길 수 있어요.
+          매주 같은 엑셀 작업을 반복하고 계시다면, 프롬프트 하나면 끝이에요.
+          아래 프롬프트를 Claude Code에 그대로 입력해보세요.
         </p>
-
-        <div className="grid gap-3 my-6">
-          {[
-            { icon: "📋", text: "여러 시트에서 데이터를 수동으로 복사 & 붙여넣기" },
-            { icon: "📊", text: "피벗 테이블 만들고 같은 수식을 매번 입력" },
-            { icon: "🏢", text: "부서별 데이터를 일일이 분류해서 정리" },
-            { icon: "📝", text: "결과를 보고서 형식으로 다시 정리" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-accent-light border border-accent/30 rounded-xl px-4 py-3"
-            >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
-              <span className="text-body">{item.text}</span>
-            </div>
-          ))}
-        </div>
-
-        <p className="text-body leading-relaxed mb-4">
-          이런 반복 작업에 매주 2-3시간씩 쓰고 있다면?
-          프롬프트 하나면 끝낼 수 있어요.
-        </p>
-
-        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
-          이 글에서 만들 것
-        </h3>
-        <div className="grid gap-3">
-          {[
-            { icon: "1", text: "엑셀 읽기 + AI 자동 분석", desc: "xlsx 파일을 열어서 데이터 구조를 자동으로 파악" },
-            { icon: "2", text: "부서별, 항목별 자동 집계", desc: "수동으로 하던 분류와 합산을 AI가 자동 처리" },
-            { icon: "3", text: "요약표 + 차트 자동 생성", desc: "SUM, AVERAGE 등 실제 엑셀 수식이 들어간 요약표 생성" },
-            { icon: "4", text: "새 엑셀 파일로 저장", desc: "원본은 그대로 두고, 결과만 새 파일로 저장" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-accent-light border border-accent/30 rounded-xl px-4 py-3"
-            >
-              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-accent text-white text-sm font-bold flex items-center justify-center">
-                {item.icon}
-              </span>
-              <div>
-                <span className="font-medium text-heading">{item.text}</span>
-                <p className="text-sm text-caption mt-0.5">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Callout type="info" title="엑셀이 없어도 돼요">
-          <p>
-            실습용 엑셀 파일이 없어도 걱정하지 마세요.
-            Claude Code에게 &quot;샘플 매출 데이터 만들어줘&quot;라고 하면 연습용 파일을 자동으로 생성해줘요.
-            실제 업무 파일이 있다면 그걸 써도 돼요.
-          </p>
-        </Callout>
-      </section>
-
-      {/* ── 시연 설명 ── */}
-      <section id="demo" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          엑셀 자동화 시연
-        </h2>
-        <p className="text-body leading-relaxed mb-4">
-          실제로 어떻게 동작하는지 살펴볼게요.
-          매출 데이터가 담긴 엑셀 파일을 Claude Code에게 분석시키는 과정이에요.
-        </p>
-
-        <h3 className="text-lg font-semibold text-heading mb-3">
-          Claude Code에 입력할 프롬프트
-        </h3>
 
         <CodeBlock title="Claude Code에 입력">{`sales_data.xlsx 읽어서
 부서별 매출 집계하고,
@@ -104,9 +33,78 @@ export default function Chapter4() {
           <p className="mt-2">추가로 &quot;원본은 건드리지 마&quot;까지 명시했거든요. 완벽한 프롬프트예요!</p>
         </Callout>
 
-        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
-          Claude가 자동으로 하는 것
-        </h3>
+        <p className="text-body leading-relaxed mt-6 mb-4">
+          이 프롬프트를 입력하면 Claude Code가 파이썬 코드를 자동으로 작성하고 실행해요.
+          엑셀을 읽고, 분석하고, 집계하고, 새 파일로 저장하는 것까지 전부 알아서 해줘요.
+        </p>
+      </section>
+
+      {/* ── 실행 결과 확인 ── */}
+      <section id="result" className="mt-16">
+        <h2 className="text-2xl font-bold text-heading mb-4">
+          실행 결과 확인
+        </h2>
+        <p className="text-body leading-relaxed mb-4">
+          프롬프트를 입력하면 터미널에 아래와 같은 결과가 나와요.
+        </p>
+
+        <CodeBlock title="터미널 실행 결과 (예시)">{`📊 엑셀 자동화 시작...
+
+✅ sales_data.xlsx 읽기 완료
+  - 시트: 1개
+  - 행: 1,247개
+  - 열: 날짜, 부서, 품목, 금액, 담당자
+
+🔍 데이터 정제 중...
+  - 빈 칸 3개 → 0으로 채움
+  - 날짜 형식 통일 완료
+
+📈 부서별 집계 결과:
+┌──────────┬───────────┬───────────┐
+│ 부서     │ 총 매출   │ 건수      │
+├──────────┼───────────┼───────────┤
+│ 영업1팀  │ 45,200만  │ 312건     │
+│ 영업2팀  │ 38,700만  │ 287건     │
+│ 마케팅   │ 22,100만  │ 198건     │
+│ 기획팀   │ 18,300만  │ 156건     │
+│ 해외사업 │ 31,500만  │ 294건     │
+├──────────┼───────────┼───────────┤
+│ 합계     │ 155,800만 │ 1,247건   │
+└──────────┴───────────┴───────────┘
+
+✅ 요약표에 SUM/AVERAGE 수식 삽입 완료
+💾 결과.xlsx 저장 완료
+📁 원본 sales_data.xlsx → 변경 없음`}</CodeBlock>
+
+        <div className="bg-gradient-to-r from-primary-lighter to-accent-light border border-primary-light rounded-2xl p-6 my-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="text-center">
+              <p className="text-sm font-medium text-caption mb-2">수동으로 하면</p>
+              <p className="text-lg font-bold text-accent">
+                30분 ~ 2시간
+              </p>
+              <p className="text-sm text-caption">복사, 분류, 수식, 서식...</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-medium text-caption mb-2">Claude Code로 하면</p>
+              <p className="text-lg font-bold text-primary">
+                프롬프트 1개, 30초
+              </p>
+              <p className="text-sm text-caption">나머지는 AI가 전부 처리</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 이해하기: Claude가 하는 일 ── */}
+      <section id="understand" className="mt-16">
+        <h2 className="text-2xl font-bold text-heading mb-4">
+          이해하기: Claude가 하는 일
+        </h2>
+        <p className="text-body leading-relaxed mb-4">
+          방금 프롬프트 하나로 엑셀이 정리됐죠?
+          그 과정에서 Claude Code가 뭘 했는지 알아볼게요.
+        </p>
 
         <div className="space-y-3">
           {[
@@ -161,60 +159,9 @@ export default function Chapter4() {
             Claude Code가 엑셀을 처리할 때 주로 사용하는 Python 라이브러리예요.
             <strong>openpyxl</strong>은 엑셀 파일(.xlsx)을 직접 읽고 쓰는 라이브러리이고,
             <strong>pandas</strong>는 데이터를 분석하고 가공하는 라이브러리예요.
-            여러분이 이 라이브러리를 알 필요는 없어요 — Claude Code가 알아서 설치하고 사용하거든요.
+            여러분이 이 라이브러리를 알 필요는 없어요 &mdash; Claude Code가 알아서 설치하고 사용하거든요.
           </p>
         </Callout>
-
-        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
-          실행 결과 예시
-        </h3>
-
-        <CodeBlock title="터미널 실행 결과 (예시)">{`📊 엑셀 자동화 시작...
-
-✅ sales_data.xlsx 읽기 완료
-  - 시트: 1개
-  - 행: 1,247개
-  - 열: 날짜, 부서, 품목, 금액, 담당자
-
-🔍 데이터 정제 중...
-  - 빈 칸 3개 → 0으로 채움
-  - 날짜 형식 통일 완료
-
-📈 부서별 집계 결과:
-┌──────────┬───────────┬───────────┐
-│ 부서     │ 총 매출   │ 건수      │
-├──────────┼───────────┼───────────┤
-│ 영업1팀  │ 45,200만  │ 312건     │
-│ 영업2팀  │ 38,700만  │ 287건     │
-│ 마케팅   │ 22,100만  │ 198건     │
-│ 기획팀   │ 18,300만  │ 156건     │
-│ 해외사업 │ 31,500만  │ 294건     │
-├──────────┼───────────┼───────────┤
-│ 합계     │ 155,800만 │ 1,247건   │
-└──────────┴───────────┴───────────┘
-
-✅ 요약표에 SUM/AVERAGE 수식 삽입 완료
-💾 결과.xlsx 저장 완료
-📁 원본 sales_data.xlsx → 변경 없음`}</CodeBlock>
-
-        <div className="bg-gradient-to-r from-primary-lighter to-accent-light border border-primary-light rounded-2xl p-6 my-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="text-center">
-              <p className="text-sm font-medium text-caption mb-2">수동으로 하면</p>
-              <p className="text-lg font-bold text-accent">
-                30분 ~ 2시간
-              </p>
-              <p className="text-sm text-caption">복사, 분류, 수식, 서식...</p>
-            </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-caption mb-2">Claude Code로 하면</p>
-              <p className="text-lg font-bold text-primary">
-                프롬프트 1개, 30초
-              </p>
-              <p className="text-sm text-caption">나머지는 AI가 전부 처리</p>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ── 직접 해보기 ── */}
@@ -226,6 +173,14 @@ export default function Chapter4() {
           실습용 엑셀 파일이 없어도 괜찮아요. Claude Code가 샘플 데이터부터 만들어주거든요.
           아래 프롬프트를 그대로 입력해보세요.
         </p>
+
+        <Callout type="info" title="엑셀이 없어도 돼요">
+          <p>
+            실습용 엑셀 파일이 없어도 걱정하지 마세요.
+            Claude Code에게 &quot;샘플 매출 데이터 만들어줘&quot;라고 하면 연습용 파일을 자동으로 생성해줘요.
+            실제 업무 파일이 있다면 그걸 써도 돼요.
+          </p>
+        </Callout>
 
         <CodeBlock title="Claude Code에 입력">{`샘플 매출 데이터 엑셀 파일 만들어줘.
 그다음 부서별로 집계해서
@@ -251,24 +206,6 @@ SUM 수식 넣은 요약표 포함한
           ))}
         </div>
 
-        <Callout type="info" title="실제 업무 파일이 있다면">
-          <p>
-            실습용 샘플 대신 본인의 실제 엑셀 파일을 사용해도 돼요.
-            파일을 작업 폴더에 넣고, 프롬프트에서 파일명만 바꾸세요.
-          </p>
-          <p className="mt-2 font-medium">
-            예: &quot;2월_매출현황.xlsx 읽어서 부서별 집계하고 요약표 만들어줘&quot;
-          </p>
-        </Callout>
-
-        <Callout type="tip" title="Excel 안에서 Claude를 쓸 수도 있어요">
-          <p>
-            Claude Pro 이상 구독자는 <strong>Excel 안에서 직접 Claude를 사용</strong>할 수 있어요.
-            Microsoft 365의 Copilot과 비슷하지만, Claude의 강력한 분석 능력을 엑셀에서 바로 쓸 수 있는 거예요.
-            셀을 선택하고 Claude에게 분석을 요청하면, 엑셀을 떠나지 않고도 AI 도움을 받을 수 있어요.
-          </p>
-        </Callout>
-
         <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
           확인 체크리스트
         </h3>
@@ -291,12 +228,30 @@ SUM 수식 넣은 요약표 포함한
           </div>
         </div>
 
+        <Callout type="info" title="실제 업무 파일이 있다면">
+          <p>
+            실습용 샘플 대신 본인의 실제 엑셀 파일을 사용해도 돼요.
+            파일을 작업 폴더에 넣고, 프롬프트에서 파일명만 바꾸세요.
+          </p>
+          <p className="mt-2 font-medium">
+            예: &quot;2월_매출현황.xlsx 읽어서 부서별 집계하고 요약표 만들어줘&quot;
+          </p>
+        </Callout>
+
         <Callout type="tip" title="결과 파일 확인 방법">
           <p>
             작업 폴더에서 결과.xlsx를 더블클릭하면 엑셀(또는 Google Sheets)로 열려요.
             요약 시트의 합계 셀을 클릭해보면, 단순 숫자가 아니라{" "}
             <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">=SUM(B2:B6)</code>{" "}
             같은 실제 수식이 들어있는 걸 확인할 수 있어요.
+          </p>
+        </Callout>
+
+        <Callout type="tip" title="Excel 안에서 Claude를 쓸 수도 있어요">
+          <p>
+            Claude Pro 이상 구독자는 <strong>Excel 안에서 직접 Claude를 사용</strong>할 수 있어요.
+            Microsoft 365의 Copilot과 비슷하지만, Claude의 강력한 분석 능력을 엑셀에서 바로 쓸 수 있는 거예요.
+            셀을 선택하고 Claude에게 분석을 요청하면, 엑셀을 떠나지 않고도 AI 도움을 받을 수 있어요.
           </p>
         </Callout>
       </section>
@@ -464,7 +419,7 @@ SUM 수식 넣은 요약표 포함한
         {/* 마무리 */}
         <div className="border-2 border-border-subtle rounded-xl p-6 text-center my-8 bg-subtle">
           <p className="text-lg font-bold text-heading mb-1">
-            매주 2시간 걸리던 엑셀 작업 → 프롬프트 1개, 30초
+            매주 2시간 걸리던 엑셀 작업 &rarr; 프롬프트 1개, 30초
           </p>
           <p className="text-sm text-caption mt-2">
             코딩 경험이 없어도, 엑셀 고수가 아니어도 Claude Code가 대신 해줘요.

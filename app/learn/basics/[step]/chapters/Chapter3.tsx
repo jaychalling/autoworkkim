@@ -9,65 +9,17 @@ import ScreenshotPlaceholder from "@/components/learn/ScreenshotPlaceholder";
 export default function Chapter3() {
   return (
     <>
-      {/* ── 상황 인식 ── */}
-      <section id="situation">
+      {/* ── 사전 준비: Google API 설정 ── */}
+      <section id="google-api">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          매일 아침, 이메일과의 전쟁
+          사전 준비: Google Gmail API 설정
         </h2>
         <p className="text-body leading-relaxed mb-4">
-          출근하면 가장 먼저 하는 일이 뭔가요?
-          아마 메일함을 여는 거겠죠. 밤사이 쌓인 수십 통의 메일.
-          하나하나 열어보면서 &quot;이건 뉴스레터니까 나중에&quot;,
-          &quot;이건 팀장님한테 답장해야 하고&quot;, &quot;이건 뭐지?&quot; 하면서
-          분류하는 데만 30분이 훌쩍 지나가요.
+          매일 아침 메일 분류에 30분씩 쓰고 계시다면, 이걸 자동화해볼게요.
+          Claude Code가 Gmail에 접근하려면 &ldquo;열쇠&rdquo;가 필요해요.
+          Google에서 &ldquo;이 프로그램이 내 메일에 접근해도 됩니다&rdquo;라는 허가증을 만드는 거예요.
+          <strong>한 번만 설정하면 계속 사용</strong>할 수 있어요.
         </p>
-
-        <div className="grid gap-3 my-6">
-          {[
-            { icon: "📬", text: "수십 통의 메일을 일일이 열어서 확인" },
-            { icon: "🏷️", text: "뉴스레터 / 알림 / 업무 메일을 수동으로 분류" },
-            { icon: "😰", text: "바쁜 와중에 중요한 메일을 놓치는 경우 발생" },
-            { icon: "✍️", text: "비슷한 답장을 매번 처음부터 작성" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-accent-light border border-accent/30 rounded-xl px-4 py-3"
-            >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
-              <span className="text-body">{item.text}</span>
-            </div>
-          ))}
-        </div>
-
-        <p className="text-body leading-relaxed mb-4">
-          이 과정을 매일 반복하고 있다면, 이걸 자동화해봐요.
-        </p>
-
-        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
-          이 글에서 만들 것
-        </h3>
-        <div className="grid gap-3">
-          {[
-            { icon: "1", text: "메일 자동 수집 + AI 분류", desc: "Gmail에서 최근 메일을 가져와서 AI가 자동으로 카테고리 분류" },
-            { icon: "2", text: "뉴스레터 & 알림 자동 읽음 처리", desc: "중요하지 않은 메일은 자동으로 읽음 표시" },
-            { icon: "3", text: "중요 메일 답장 초안 자동 작성", desc: "업무 중요 메일에 대해 AI가 답장 초안을 만들어줌" },
-            { icon: "4", text: "저장 전 사용자 승인", desc: "AI가 만든 초안을 사람이 확인하고 승인해야 저장됨" },
-            { icon: "5", text: "매일 아침 자동 반복 실행", desc: "한 번 만들면 매일 아침 자동으로 돌아가게 스케줄 등록" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-accent-light border border-accent/30 rounded-xl px-4 py-3"
-            >
-              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-accent text-white text-sm font-bold flex items-center justify-center">
-                {item.icon}
-              </span>
-              <div>
-                <span className="font-medium text-heading">{item.text}</span>
-                <p className="text-sm text-caption mt-0.5">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
 
         <Callout type="info" title="코딩 경험이 없어도 돼요">
           <p>
@@ -76,17 +28,475 @@ export default function Chapter3() {
             여러분은 결과를 확인하고 y/n으로 승인만 하면 돼요.
           </p>
         </Callout>
+
+        <Callout type="info" title="API 키가 필요한가요?">
+          <p>
+            아니요! 많은 분이 &ldquo;API 키를 발급해야 하나?&rdquo;라고 걱정하시는데,
+            <strong>API 키는 필요 없어요</strong>.
+            필요한 건 <strong>OAuth 클라이언트 ID</strong>라는 것 하나뿐이에요.
+            이걸 만들고 브라우저에서 Google 로그인 한 번 하면 끝이에요.
+          </p>
+        </Callout>
+
+        <p className="text-body leading-relaxed mt-8 mb-4">
+          방법이 두 가지 있어요. 상황에 맞는 걸 골라서 따라하세요.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-elevated border-2 border-primary-light rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg font-bold text-primary">A</span>
+              <h3 className="font-bold text-heading">credentials.json 방식</h3>
+            </div>
+            <p className="text-sm text-caption">
+              기존 방식. Claude Code가 직접 Gmail API를 호출하는 Python/Node 코드를 작성해요.
+              credentials.json 파일을 작업 폴더에 넣으면 돼요.
+            </p>
+            <span className="inline-block mt-3 text-xs font-medium bg-primary-lighter text-primary px-2 py-1 rounded-lg">
+              범용 &middot; 모든 OS
+            </span>
+          </div>
+          <div className="bg-elevated border-2 border-accent/30 rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg font-bold text-accent">B</span>
+              <h3 className="font-bold text-heading">GWS CLI 방식</h3>
+            </div>
+            <p className="text-sm text-caption">
+              2025년에 Google이 출시한 공식 CLI 도구.
+              터미널에서 바로{" "}
+              <code className="bg-subtle px-1 py-0.5 rounded text-xs font-mono">gws gmail</code>{" "}
+              명령어로 메일을 조작할 수 있어요.
+            </p>
+            <span className="inline-block mt-3 text-xs font-medium bg-accent-light text-accent px-2 py-1 rounded-lg">
+              최신 &middot; Claude Code MCP 연동 가능
+            </span>
+          </div>
+        </div>
+
+        {/* ── 공통: OAuth 클라이언트 ID 만들기 ── */}
+        <div className="bg-elevated border border-border-subtle rounded-2xl p-6">
+          <h3 className="font-bold text-heading mb-2 text-lg">
+            공통 단계: OAuth 클라이언트 ID 만들기 (1회)
+          </h3>
+          <p className="text-sm text-caption mb-5">
+            A, B 어느 방식이든 이 과정은 동일해요. 처음 한 번만 하면 돼요.
+          </p>
+
+          <div className="space-y-5">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
+                1
+              </div>
+              <div>
+                <p className="font-medium text-heading">Google Cloud Console 접속</p>
+                <p className="text-sm text-caption mt-1">
+                  브라우저에서{" "}
+                  <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">
+                    console.cloud.google.com
+                  </code>{" "}
+                  에 접속하세요. Google 계정으로 로그인하세요.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
+                2
+              </div>
+              <div>
+                <p className="font-medium text-heading">프로젝트 생성 &rarr; Gmail API 활성화</p>
+                <p className="text-sm text-caption mt-1">
+                  상단에서 &ldquo;새 프로젝트&rdquo;를 만들어요 (이름은 아무거나 OK).
+                  그 다음 좌측 메뉴에서 <strong>&ldquo;API 및 서비스&rdquo; &rarr; &ldquo;라이브러리&rdquo;</strong>로 가서
+                  &ldquo;Gmail API&rdquo;를 검색하고 <strong>&ldquo;사용&rdquo;</strong> 버튼을 클릭하세요.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
+                3
+              </div>
+              <div>
+                <p className="font-medium text-heading">OAuth 동의 화면 설정 + 테스트 사용자 등록</p>
+                <p className="text-sm text-caption mt-1">
+                  좌측 메뉴에서 &ldquo;Google Auth Platform&rdquo; (구 OAuth 동의 화면)으로 이동해요.
+                  <strong>&ldquo;Audience&rdquo;</strong> 탭에서 &ldquo;External&rdquo;을 선택하고,
+                  <strong>테스트 사용자에 본인 Gmail을 추가</strong>하세요.
+                  이걸 안 하면 나중에 로그인할 때 &ldquo;access_denied&rdquo; 에러가 나요.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
+                4
+              </div>
+              <div>
+                <p className="font-medium text-heading">OAuth 클라이언트 ID 만들기</p>
+                <p className="text-sm text-caption mt-1">
+                  &ldquo;Clients&rdquo; 탭 (또는 &ldquo;사용자 인증 정보&rdquo;) &rarr; &ldquo;OAuth 클라이언트 ID 만들기&rdquo;.
+                  애플리케이션 유형은 <strong>&ldquo;데스크톱 앱&rdquo;</strong>으로 선택하세요.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
+                5
+              </div>
+              <div>
+                <p className="font-medium text-heading">JSON 다운로드</p>
+                <p className="text-sm text-caption mt-1">
+                  생성 완료 후 <strong>&ldquo;JSON 다운로드&rdquo;</strong> 버튼을 클릭하세요.
+                  이 파일이 여러분의 &ldquo;열쇠&rdquo;예요.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ScreenshotPlaceholder
+          alt="Google Cloud Console — Gmail API 활성화 화면"
+          caption="Google Cloud Console에서 Gmail API를 검색하고 '사용' 버튼을 클릭하는 화면"
+        />
+
+        <ScreenshotPlaceholder
+          alt="Google Cloud Console — OAuth 클라이언트 ID 생성 화면"
+          caption="사용자 인증 정보에서 OAuth 클라이언트 ID를 만드는 화면"
+        />
+
+        <Callout type="tip" title="Playwright로 이 과정을 자동화할 수 있어요">
+          <p>
+            이전 Step에서 설치한 <strong>Playwright</strong>, 기억하시죠?
+            사실 위의 Cloud Console 설정 과정도 Playwright로 자동화할 수 있어요.
+            Claude Code에게 이렇게 말해보세요:
+          </p>
+          <p className="mt-2 font-medium text-heading">
+            &ldquo;Playwright로 Google Cloud Console에 접속해서 Gmail API 활성화하고 OAuth 클라이언트 ID 만들어줘&rdquo;
+          </p>
+          <p className="mt-2">
+            Claude Code가 브라우저를 자동으로 열고, 프로젝트 생성부터 OAuth 설정까지
+            클릭 하나 없이 전부 처리해줘요.
+            <strong> 여러분은 Google 로그인 비밀번호만 입력</strong>하면 돼요.
+          </p>
+          <p className="mt-2 text-sm text-caption">
+            단, Google은 자동화 도구의 로그인을 차단할 수 있어서,
+            로그인까지는 직접 하고 그 이후 단계만 자동화하는 게 더 안정적이에요.
+          </p>
+        </Callout>
+
+        {/* ── 방법 A: credentials.json ── */}
+        <div className="mt-10">
+          <h3 className="text-lg font-bold text-heading mb-3 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-primary text-white text-sm font-bold flex items-center justify-center">A</span>
+            credentials.json 방식
+          </h3>
+          <p className="text-body leading-relaxed mb-4">
+            다운로드한 JSON 파일을{" "}
+            <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">credentials.json</code>으로
+            이름을 바꿔서 작업 폴더에 넣으세요. 끝이에요!
+          </p>
+          <CodeBlock title="파일 위치 (예시)">{`~/Desktop/autowork/credentials.json`}</CodeBlock>
+          <p className="text-sm text-caption mt-3">
+            Claude Code가 이 파일을 읽어서 Gmail API 연결 코드를 자동으로 작성해요.
+            첫 실행 시 브라우저가 열리고 Google 로그인을 요청해요.
+            로그인하면 토큰이 저장되고 이후엔 자동으로 연결돼요.
+          </p>
+        </div>
+
+        {/* ── 방법 B: GWS CLI ── */}
+        <div className="mt-10">
+          <h3 className="text-lg font-bold text-heading mb-3 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-accent text-white text-sm font-bold flex items-center justify-center">B</span>
+            GWS CLI 방식 (Google Workspace CLI)
+          </h3>
+          <p className="text-body leading-relaxed mb-4">
+            2025년에 Google이 공식 출시한 CLI 도구예요.
+            터미널에서 바로 Gmail, Drive, Sheets, Calendar를 조작할 수 있어요.
+            심지어 <strong>MCP 서버 모드</strong>를 지원해서 Claude Code와 직접 연동도 가능해요.
+          </p>
+
+          <h4 className="font-semibold text-heading mb-3 mt-6">설치</h4>
+          <OsTabs
+            mac={`# Homebrew로 설치 (가장 쉬움)
+brew install gws
+
+# 또는 npm으로 설치
+npm install -g @googleworkspace/cli`}
+            windows={`# 1. GitHub Releases에서 gws.exe 다운로드
+#    github.com/googleworkspace/google-workspace-cli/releases
+
+# 2. 다운로드한 gws.exe를 npm 글로벌 폴더에 복사
+#    보통: %APPDATA%\\npm\\gws.exe
+
+# 3. 터미널에서 확인
+gws --version`}
+          />
+
+          <Callout type="warning" title="Windows npm 설치 에러가 난다면">
+            <p>
+              Windows에서{" "}
+              <code className="bg-subtle px-1 py-0.5 rounded text-xs font-mono">
+                npm install -g @googleworkspace/cli
+              </code>{" "}
+              실행 시 tar 에러가 발생할 수 있어요.
+              이 경우 GitHub Releases 페이지에서 <strong>gws.exe</strong>를 직접 다운로드해서
+              npm 글로벌 bin 폴더에 넣으세요.
+              기존 npm이 만든{" "}
+              <code className="bg-subtle px-1 py-0.5 rounded text-xs font-mono">gws.cmd</code>,{" "}
+              <code className="bg-subtle px-1 py-0.5 rounded text-xs font-mono">gws.ps1</code>{" "}
+              파일이 있다면 삭제하세요.
+            </p>
+          </Callout>
+
+          <h4 className="font-semibold text-heading mb-3 mt-6">인증 (로그인)</h4>
+          <p className="text-sm text-caption mb-3">
+            위에서 다운로드한 JSON 파일을{" "}
+            <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">client_secret.json</code>으로
+            이름을 바꿔서 GWS 설정 폴더에 넣으세요.
+          </p>
+          <OsTabs
+            mac={`# JSON 파일을 GWS 설정 폴더에 복사
+cp ~/Downloads/client_secret_XXX.json ~/.config/gws/client_secret.json
+
+# 로그인
+gws auth login`}
+            windows={`# JSON 파일을 GWS 설정 폴더에 복사
+# %APPDATA%\\gws\\client_secret.json
+
+# 로그인
+gws auth login`}
+          />
+          <p className="text-sm text-caption mt-3">
+            브라우저가 열리고 Google 로그인 화면이 나와요. 로그인하면 끝!
+          </p>
+
+          <h4 className="font-semibold text-heading mb-3 mt-6">테스트</h4>
+          <CodeBlock title="터미널">{`# Gmail 메일 목록 가져오기
+gws gmail users messages list --user-id me`}</CodeBlock>
+          <p className="text-sm text-caption mt-2">
+            메일 ID 목록이 출력되면 성공이에요. 이제 Claude Code에서 GWS CLI를 활용할 수 있어요.
+          </p>
+        </div>
+
+        {/* ── 트러블슈팅 ── */}
+        <div className="mt-10">
+          <h3 className="text-lg font-semibold text-heading mb-4">
+            자주 겪는 문제 & 해결법
+          </h3>
+
+          <Callout type="warning" title="access_denied 에러가 나요">
+            <p>
+              &ldquo;개발자가 액세스 권한을 부여하지 않았습니다&rdquo; 에러가 나면,
+              <strong>테스트 사용자 등록</strong>을 빠뜨린 거예요.
+              Google Cloud Console &rarr; Google Auth Platform &rarr; Audience 탭에서
+              본인 Gmail을 테스트 사용자로 추가하세요.
+            </p>
+            <p className="mt-2 text-sm">
+              &ldquo;부적격 계정&rdquo; 경고가 뜨더라도 실제로는 추가돼요. 목록에 나타나면 OK.
+            </p>
+          </Callout>
+
+          <Callout type="warning" title="테스트 모드 토큰 유효기간">
+            <p>
+              Google OAuth &ldquo;테스트 모드&rdquo;의 토큰은 <strong>7일 후 만료</strong>돼요.
+              7일이 지나면 다시 로그인해야 해요.
+              프로덕션으로 전환하면 이 제한이 없어지지만, 개인 사용이라면 7일마다 재인증하는 것도 크게 불편하지 않아요.
+            </p>
+          </Callout>
+
+          <Callout type="tip" title="이 과정이 복잡하게 느껴지시나요?">
+            <p>
+              Google Cloud Console이 처음이면 당연히 복잡하게 느껴져요.
+              근데 걱정 마세요. Claude Code에게 도움을 요청할 수 있거든요!
+            </p>
+            <p className="mt-2">
+              터미널에서 Claude Code를 실행하고 이렇게 물어보세요:
+            </p>
+            <p className="mt-1 font-medium text-heading">
+              &ldquo;Gmail API용 OAuth 설정하는 방법을 단계별로 알려줘&rdquo;
+            </p>
+            <p className="mt-2">
+              화면을 보면서 하나씩 따라하면 돼요. 모르는 부분은 계속 물어보세요.
+            </p>
+          </Callout>
+        </div>
       </section>
 
-      {/* ── 파이프라인 설명 ── */}
-      <section id="pipeline" className="mt-16">
+      {/* ── 바로 실행하기 ── */}
+      <section id="execute" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
-          Gmail 자동화 파이프라인 6단계
+          바로 실행하기
+        </h2>
+        <p className="text-body leading-relaxed mb-4">
+          credentials.json이 작업 폴더에 준비됐으면, 이제 Claude Code에게 시킬 차례예요.
+          터미널에서 Claude Code를 실행하고(<code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">claude</code> 입력),
+          아래 프롬프트를 그대로 입력하세요.
+        </p>
+
+        <CodeBlock title="Claude Code에 입력할 프롬프트">{`credentials.json으로
+Gmail 자동화 해줘.
+메일 분류하고, 뉴스레터는
+읽음처리, 업무중요는 답장
+초안 잡아줘. emails.json 저장.`}</CodeBlock>
+
+        <div className="bg-gradient-to-r from-primary-lighter to-accent-light border border-primary-light rounded-2xl p-6 my-8">
+          <p className="text-xl font-bold text-heading text-center mb-2">
+            이게 전부예요.
+          </p>
+          <p className="text-body text-center">
+            프롬프트 하나로 Claude가 아래 전체를 알아서 처리해요.
+          </p>
+        </div>
+
+        <h3 className="text-lg font-semibold text-heading mb-3">
+          Claude가 자동으로 하는 것
+        </h3>
+        <div className="grid gap-3">
+          {[
+            { icon: "🔗", text: "Gmail API 연결 코드 작성", desc: "credentials.json을 읽어서 OAuth 인증 코드를 자동 생성" },
+            { icon: "📨", text: "메일 50개 수집 + 4카테고리 분류", desc: "받은편지함에서 메일을 가져와서 업무중요/뉴스레터/알림/기타로 분류" },
+            { icon: "👁️", text: "뉴스레터 & 알림 자동 읽음 처리", desc: "중요하지 않은 메일은 읽음 표시로 자동 변경" },
+            { icon: "✏️", text: "업무 중요 메일마다 답장 초안 작성", desc: "메일 내용을 분석해서 적절한 답변을 AI가 작성" },
+            { icon: "✅", text: "y/n 승인 후 Gmail Draft 저장", desc: "초안을 보여주고, 승인하면 Gmail 임시보관함에 저장" },
+            { icon: "💾", text: "전체 결과 emails.json 저장", desc: "분류 결과와 처리 내역을 JSON 파일로 기록" },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-3 bg-elevated border border-border-subtle rounded-xl px-4 py-3"
+            >
+              <span className="text-xl flex-shrink-0">{item.icon}</span>
+              <div>
+                <span className="font-medium text-heading">{item.text}</span>
+                <p className="text-sm text-caption mt-0.5">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Callout type="info" title="Claude Code 구독이 필요해요">
+          <p>
+            Claude Code를 사용하려면 <strong>Claude 구독</strong>이 필요해요.
+            API 키 같은 복잡한 설정은 필요 없고, claude.ai에서 구독만 하면 돼요.
+          </p>
+          <p className="mt-2">
+            추천 플랜: <strong>Claude Max ($100/월)</strong> &mdash;
+            Claude Code 사용량이 넉넉해서 자동화 프로젝트를 여유 있게 진행할 수 있어요.
+            Pro 플랜($20/월)으로도 시작할 수 있지만, 실습을 많이 하다 보면 사용량 제한에 걸릴 수 있어요.
+          </p>
+        </Callout>
+
+        <Callout type="info" title="MCP를 사용한 Gmail 접근도 가능해요">
+          <p>
+            OAuth 설정이 번거로우면, <strong>Gmail MCP 서버</strong>를 사용하는 방법도 있어요.
+            MCP(Model Context Protocol)는 Claude Code가 외부 서비스에 접근하는 표준 방식이에요.
+            커뮤니티에서 만든 Gmail MCP 서버를 연결하면, OAuth 설정 없이도 Gmail에 접근할 수 있어요.
+          </p>
+          <p className="mt-2 text-sm">
+            MCP에 대해 더 알고 싶다면, Claude Code 안에서 &ldquo;MCP 서버 설정 방법 알려줘&rdquo;라고 물어보세요.
+          </p>
+        </Callout>
+      </section>
+
+      {/* ── 실행 결과 확인 ── */}
+      <section id="expected" className="mt-16">
+        <h2 className="text-2xl font-bold text-heading mb-4">
+          실행 결과 확인
         </h2>
         <p className="text-body leading-relaxed mb-6">
-          우리가 만들 자동화 시스템은 아래 6단계로 동작해요.
-          복잡해 보이지만 걱정 마세요. Claude Code가 이 전체를 알아서 만들어줘요.
-          여기서는 &quot;어떤 흐름으로 돌아가는지&quot;만 이해하면 돼요.
+          프롬프트를 입력하면 Claude Code가 코드를 작성하고 실행해요.
+          터미널에 아래와 같은 결과가 나타나요.
+        </p>
+
+        <ScreenshotPlaceholder
+          alt="Gmail 자동화 실행 결과 — 터미널 화면"
+          caption="Claude Code가 Gmail을 분류하고 답장 초안을 작성하는 실행 화면"
+        />
+
+        <h3 className="text-lg font-semibold text-heading mb-3">
+          1단계: 메일 수집 + 분류 + 자동 읽음 처리
+        </h3>
+        <CodeBlock title="터미널 실행 결과 (예시)">{`📧 Gmail 자동화 시작...
+
+✅ Gmail API 연결 성공
+📨 메일 50개 수집 완료
+
+📊 분류 결과:
+  업무 중요  : 8건
+  뉴스레터   : 22건
+  알림       : 15건
+  기타       : 5건
+
+👁️ 뉴스레터 22건 읽음 처리 완료
+👁️ 알림 15건 읽음 처리 완료`}</CodeBlock>
+
+        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
+          2단계: 답장 초안 승인 화면
+        </h3>
+        <CodeBlock title="터미널 실행 결과 (예시)">{`✏️ 업무 중요 메일 답장 초안 작성 중...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📩 From: 김팀장 <teamlead@company.com>
+📋 제목: 3월 프로젝트 일정 확인 부탁
+
+📝 답장 초안:
+"김팀장님, 안녕하세요.
+3월 프로젝트 일정 확인했습니다.
+현재 진행 상황과 함께 금주 금요일까지
+업데이트된 일정표 공유드리겠습니다.
+감사합니다."
+
+💾 이 초안을 Gmail Draft에 저장할까요? (y/n): y
+✅ Draft 저장 완료!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📩 From: 마케팅팀 <marketing@company.com>
+📋 제목: 다음 주 미팅 자료 요청
+
+📝 답장 초안:
+"안녕하세요, 마케팅팀.
+요청하신 미팅 자료 준비하겠습니다.
+월요일 오전까지 공유드릴 수 있을까요?
+필요한 항목이 더 있으시면 알려주세요."
+
+💾 이 초안을 Gmail Draft에 저장할까요? (y/n): y
+✅ Draft 저장 완료!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 최종 결과:
+  처리된 메일: 50건
+  읽음 처리: 37건
+  답장 초안: 8건 (승인 8건)
+  저장: emails.json ✅`}</CodeBlock>
+
+        <div className="bg-gradient-to-r from-primary-lighter to-accent-light border border-primary-light rounded-2xl p-6 my-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="text-center">
+              <p className="text-sm font-medium text-caption mb-2">사람이 한 것</p>
+              <p className="text-lg font-bold text-heading">
+                프롬프트 1개 + y/n 클릭 몇 번
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-medium text-caption mb-2">AI가 한 것</p>
+              <p className="text-lg font-bold text-primary">
+                나머지 전부
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 이해하기: 자동화 파이프라인 ── */}
+      <section id="pipeline" className="mt-16">
+        <h2 className="text-2xl font-bold text-heading mb-4">
+          이해하기: 자동화 파이프라인 6단계
+        </h2>
+        <p className="text-body leading-relaxed mb-6">
+          방금 실행한 자동화가 내부적으로 어떻게 동작하는지 알아볼게요.
+          아래 6단계로 돌아가는 구조예요.
+          복잡해 보이지만 걱정 마세요 &mdash; 여러분은 이미 프롬프트 하나로 이 전체를 실행한 거예요.
         </p>
 
         <div className="space-y-4">
@@ -247,321 +657,6 @@ export default function Chapter3() {
         </Callout>
       </section>
 
-      {/* ── Google API 설정 ── */}
-      <section id="google-api" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          사전 준비: Google Gmail API 설정
-        </h2>
-        <p className="text-body leading-relaxed mb-4">
-          Claude Code가 Gmail에 접근하려면 &quot;열쇠&quot;가 필요해요.
-          이 열쇠를 <strong>OAuth 인증 정보(credentials.json)</strong>라고 해요.
-          Google Cloud Console에서 만들 수 있어요.
-        </p>
-
-        <Callout type="info" title="왜 이게 필요한가요?">
-          <p>
-            여러분의 Gmail 계정에 프로그램이 접근하려면, Google에서 &quot;이 프로그램을 허용합니다&quot;라는
-            허가증을 발급받아야 하거든요. 이건 보안을 위한 Google의 정책이에요.
-            한 번만 설정하면 계속 사용할 수 있어요.
-          </p>
-        </Callout>
-
-        <div className="space-y-6 mt-8">
-          <div className="bg-elevated border border-border-subtle rounded-2xl p-6">
-            <h3 className="font-bold text-heading mb-4 text-lg">설정 순서</h3>
-            <div className="space-y-5">
-              {/* Step 1 */}
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
-                  1
-                </div>
-                <div>
-                  <p className="font-medium text-heading">Google Cloud Console 접속</p>
-                  <p className="text-sm text-caption mt-1">
-                    브라우저에서{" "}
-                    <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">
-                      console.cloud.google.com
-                    </code>{" "}
-                    에 접속하세요. Google 계정으로 로그인하세요.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
-                  2
-                </div>
-                <div>
-                  <p className="font-medium text-heading">프로젝트 생성 &rarr; Gmail API 활성화</p>
-                  <p className="text-sm text-caption mt-1">
-                    상단에서 &quot;새 프로젝트&quot;를 만들어요 (이름은 아무거나 OK).
-                    그 다음 좌측 메뉴에서 <strong>&quot;API 및 서비스&quot; &rarr; &quot;라이브러리&quot;</strong>로 가서
-                    &quot;Gmail API&quot;를 검색하고 <strong>&quot;사용&quot;</strong> 버튼을 클릭하세요.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
-                  3
-                </div>
-                <div>
-                  <p className="font-medium text-heading">OAuth 동의 화면 설정</p>
-                  <p className="text-sm text-caption mt-1">
-                    &quot;API 및 서비스&quot; &rarr; &quot;OAuth 동의 화면&quot;에서 설정해요.
-                    Google이 최근 이 UI를 &quot;Google Auth Platform&quot;으로 변경했어요.
-                    새 UI에서는 Branding, Audience, Data Access, Clients 탭으로 구성돼요.
-                    &quot;Audience&quot; 탭에서 <strong>&quot;External&quot;</strong>을 선택하고,
-                    테스트 사용자에 <strong>본인 Gmail을 추가</strong>하세요.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 4 */}
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
-                  4
-                </div>
-                <div>
-                  <p className="font-medium text-heading">OAuth 클라이언트 ID 만들기</p>
-                  <p className="text-sm text-caption mt-1">
-                    &quot;사용자 인증 정보&quot; &rarr; &quot;사용자 인증 정보 만들기&quot; &rarr; &quot;OAuth 클라이언트 ID&quot;를 선택하세요.
-                    애플리케이션 유형은 <strong>&quot;데스크톱 앱&quot;</strong>으로 선택하세요.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 5 */}
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-lighter text-primary font-bold flex items-center justify-center text-sm">
-                  5
-                </div>
-                <div>
-                  <p className="font-medium text-heading">credentials.json 다운로드</p>
-                  <p className="text-sm text-caption mt-1">
-                    생성이 완료되면 <strong>&quot;JSON 다운로드&quot;</strong> 버튼이 나타나요.
-                    다운로드한 파일을 <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">credentials.json</code>으로
-                    이름을 바꿔서 작업 폴더(autowork)에 넣어주세요.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Callout type="warning" title="credentials.json 파일 위치가 중요해요">
-          <p>
-            다운로드한 파일을 반드시 작업 폴더 안에 넣어야 해요.
-            Claude Code는 현재 작업 폴더의 파일만 볼 수 있거든요.
-          </p>
-          <div className="mt-2">
-            <code className="bg-subtle px-2 py-1 rounded text-sm font-mono">
-              ~/Desktop/autowork/credentials.json
-            </code>
-          </div>
-        </Callout>
-
-        <ScreenshotPlaceholder
-          alt="Google Cloud Console — Gmail API 활성화 화면"
-          caption="Google Cloud Console에서 Gmail API를 검색하고 '사용' 버튼을 클릭하는 화면"
-        />
-
-        <ScreenshotPlaceholder
-          alt="Google Cloud Console — OAuth 클라이언트 ID 생성 화면"
-          caption="사용자 인증 정보에서 OAuth 클라이언트 ID를 만드는 화면"
-        />
-
-        <Callout type="warning" title="테스트 모드 토큰 유효기간">
-          <p>
-            Google OAuth의 &quot;테스트 모드&quot;에서 발급된 토큰(refresh token)은 <strong>7일 후에 만료</strong>돼요.
-            7일이 지나면 다시 인증(로그인)해야 해요.
-            프로덕션으로 전환하면 이 제한이 없어지지만, 개인 사용이라면 7일마다 재인증하는 것도 크게 불편하지 않아요.
-          </p>
-        </Callout>
-
-        <Callout type="tip" title="이 과정이 복잡하게 느껴지시나요?">
-          <p>
-            Google Cloud Console이 처음이면 당연히 복잡하게 느껴져요.
-            근데 걱정 마세요. Claude Code에게 도움을 요청할 수 있거든요!
-          </p>
-          <p className="mt-2">
-            터미널에서 Claude Code를 실행하고 이렇게 물어보세요:
-          </p>
-          <p className="mt-1 font-medium text-heading">
-            &quot;Gmail API용 OAuth 설정하는 방법을 단계별로 알려줘&quot;
-          </p>
-          <p className="mt-2">
-            화면을 보면서 하나씩 따라하면 돼요. 모르는 부분은 계속 물어보세요.
-          </p>
-        </Callout>
-      </section>
-
-      {/* ── 프롬프트 입력 ── */}
-      <section id="prompt" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          Claude Code에 입력할 프롬프트
-        </h2>
-        <p className="text-body leading-relaxed mb-4">
-          credentials.json이 작업 폴더에 준비됐으면, 이제 Claude Code에게 시킬 차례예요.
-          터미널에서 Claude Code를 실행하고(<code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">claude</code> 입력),
-          아래 프롬프트를 그대로 입력하세요.
-        </p>
-
-        <CodeBlock title="Claude Code에 입력할 프롬프트">{`credentials.json으로
-Gmail 자동화 해줘.
-메일 분류하고, 뉴스레터는
-읽음처리, 업무중요는 답장
-초안 잡아줘. emails.json 저장.`}</CodeBlock>
-
-        <div className="bg-gradient-to-r from-primary-lighter to-accent-light border border-primary-light rounded-2xl p-6 my-8">
-          <p className="text-xl font-bold text-heading text-center mb-2">
-            이게 전부예요.
-          </p>
-          <p className="text-body text-center">
-            프롬프트 하나로 Claude가 아래 전체를 알아서 처리해요.
-          </p>
-        </div>
-
-        <h3 className="text-lg font-semibold text-heading mb-3">
-          Claude가 자동으로 하는 것
-        </h3>
-        <div className="grid gap-3">
-          {[
-            { icon: "🔗", text: "Gmail API 연결 코드 작성", desc: "credentials.json을 읽어서 OAuth 인증 코드를 자동 생성" },
-            { icon: "📨", text: "메일 50개 수집 + 4카테고리 분류", desc: "받은편지함에서 메일을 가져와서 업무중요/뉴스레터/알림/기타로 분류" },
-            { icon: "👁️", text: "뉴스레터 & 알림 자동 읽음 처리", desc: "중요하지 않은 메일은 읽음 표시로 자동 변경" },
-            { icon: "✏️", text: "업무 중요 메일마다 답장 초안 작성", desc: "메일 내용을 분석해서 적절한 답변을 AI가 작성" },
-            { icon: "✅", text: "y/n 승인 후 Gmail Draft 저장", desc: "초안을 보여주고, 승인하면 Gmail 임시보관함에 저장" },
-            { icon: "💾", text: "전체 결과 emails.json 저장", desc: "분류 결과와 처리 내역을 JSON 파일로 기록" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-elevated border border-border-subtle rounded-xl px-4 py-3"
-            >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
-              <div>
-                <span className="font-medium text-heading">{item.text}</span>
-                <p className="text-sm text-caption mt-0.5">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Callout type="info" title="Claude Code 구독이 필요해요">
-          <p>
-            Claude Code를 사용하려면 <strong>Claude 구독</strong>이 필요해요.
-            API 키 같은 복잡한 설정은 필요 없고, claude.ai에서 구독만 하면 돼요.
-          </p>
-          <p className="mt-2">
-            추천 플랜: <strong>Claude Max ($100/월)</strong> &mdash;
-            Claude Code 사용량이 넉넉해서 자동화 프로젝트를 여유 있게 진행할 수 있어요.
-            Pro 플랜($20/월)으로도 시작할 수 있지만, 실습을 많이 하다 보면 사용량 제한에 걸릴 수 있어요.
-          </p>
-        </Callout>
-
-        <Callout type="info" title="MCP를 사용한 Gmail 접근도 가능해요">
-          <p>
-            OAuth 설정이 번거로우면, <strong>Gmail MCP 서버</strong>를 사용하는 방법도 있어요.
-            MCP(Model Context Protocol)는 Claude Code가 외부 서비스에 접근하는 표준 방식이에요.
-            커뮤니티에서 만든 Gmail MCP 서버를 연결하면, OAuth 설정 없이도 Gmail에 접근할 수 있어요.
-          </p>
-          <p className="mt-2 text-sm">
-            MCP에 대해 더 알고 싶다면, Claude Code 안에서 &quot;MCP 서버 설정 방법 알려줘&quot;라고 물어보세요.
-          </p>
-        </Callout>
-      </section>
-
-      {/* ── 예상 실행 결과 ── */}
-      <section id="expected" className="mt-16">
-        <h2 className="text-2xl font-bold text-heading mb-4">
-          실행하면 이렇게 돼요
-        </h2>
-        <p className="text-body leading-relaxed mb-6">
-          프롬프트를 입력하면 Claude Code가 코드를 작성하고 실행해요.
-          터미널에 아래와 같은 결과가 나타나요.
-        </p>
-
-        <ScreenshotPlaceholder
-          alt="Gmail 자동화 실행 결과 — 터미널 화면"
-          caption="Claude Code가 Gmail을 분류하고 답장 초안을 작성하는 실행 화면"
-        />
-
-        <h3 className="text-lg font-semibold text-heading mb-3">
-          1단계: 메일 수집 + 분류 + 자동 읽음 처리
-        </h3>
-        <CodeBlock title="터미널 실행 결과 (예시)">{`📧 Gmail 자동화 시작...
-
-✅ Gmail API 연결 성공
-📨 메일 50개 수집 완료
-
-📊 분류 결과:
-  업무 중요  : 8건
-  뉴스레터   : 22건
-  알림       : 15건
-  기타       : 5건
-
-👁️ 뉴스레터 22건 읽음 처리 완료
-👁️ 알림 15건 읽음 처리 완료`}</CodeBlock>
-
-        <h3 className="text-lg font-semibold text-heading mb-3 mt-8">
-          2단계: 답장 초안 승인 화면
-        </h3>
-        <CodeBlock title="터미널 실행 결과 (예시)">{`✏️ 업무 중요 메일 답장 초안 작성 중...
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📩 From: 김팀장 <teamlead@company.com>
-📋 제목: 3월 프로젝트 일정 확인 부탁
-
-📝 답장 초안:
-"김팀장님, 안녕하세요.
-3월 프로젝트 일정 확인했습니다.
-현재 진행 상황과 함께 금주 금요일까지
-업데이트된 일정표 공유드리겠습니다.
-감사합니다."
-
-💾 이 초안을 Gmail Draft에 저장할까요? (y/n): y
-✅ Draft 저장 완료!
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📩 From: 마케팅팀 <marketing@company.com>
-📋 제목: 다음 주 미팅 자료 요청
-
-📝 답장 초안:
-"안녕하세요, 마케팅팀.
-요청하신 미팅 자료 준비하겠습니다.
-월요일 오전까지 공유드릴 수 있을까요?
-필요한 항목이 더 있으시면 알려주세요."
-
-💾 이 초안을 Gmail Draft에 저장할까요? (y/n): y
-✅ Draft 저장 완료!
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 최종 결과:
-  처리된 메일: 50건
-  읽음 처리: 37건
-  답장 초안: 8건 (승인 8건)
-  저장: emails.json ✅`}</CodeBlock>
-
-        <div className="bg-gradient-to-r from-primary-lighter to-accent-light border border-primary-light rounded-2xl p-6 my-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="text-center">
-              <p className="text-sm font-medium text-caption mb-2">사람이 한 것</p>
-              <p className="text-lg font-bold text-heading">
-                프롬프트 1개 + y/n 클릭 몇 번
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-caption mb-2">AI가 한 것</p>
-              <p className="text-lg font-bold text-primary">
-                나머지 전부
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── 프롬프트 팁 ── */}
       <section id="prompt-tips" className="mt-16">
         <h2 className="text-2xl font-bold text-heading mb-4">
@@ -581,12 +676,12 @@ Gmail 자동화 해줘.
             headers={["Bad", "Good"]}
             rows={[
               [
-                '<span class="text-accent">&#10060;</span> &quot;이 파일 분석해줘&quot;',
-                '<span class="text-accent">&#9989;</span> &quot;<strong>sales.csv</strong>를 읽어서&quot;',
+                '<span class="text-accent">&#10060;</span> &ldquo;이 파일 분석해줘&rdquo;',
+                '<span class="text-accent">&#9989;</span> &ldquo;<strong>sales.csv</strong>를 읽어서&rdquo;',
               ],
               [
-                '<span class="text-accent">&#10060;</span> &quot;데이터 정리해줘&quot;',
-                '<span class="text-accent">&#9989;</span> &quot;<strong>report.xlsx</strong> 열어서&quot;',
+                '<span class="text-accent">&#10060;</span> &ldquo;데이터 정리해줘&rdquo;',
+                '<span class="text-accent">&#9989;</span> &ldquo;<strong>report.xlsx</strong> 열어서&rdquo;',
               ],
             ]}
           />
@@ -604,12 +699,12 @@ Gmail 자동화 해줘.
             headers={["Bad", "Good"]}
             rows={[
               [
-                '<span class="text-accent">&#10060;</span> &quot;정리해줘&quot;',
-                '<span class="text-accent">&#9989;</span> &quot;<strong>요약.xlsx로 저장</strong>해줘&quot;',
+                '<span class="text-accent">&#10060;</span> &ldquo;정리해줘&rdquo;',
+                '<span class="text-accent">&#9989;</span> &ldquo;<strong>요약.xlsx로 저장</strong>해줘&rdquo;',
               ],
               [
-                '<span class="text-accent">&#10060;</span> &quot;분석해줘&quot;',
-                '<span class="text-accent">&#9989;</span> &quot;<strong>차트 포함한 보고서.html</strong> 만들어줘&quot;',
+                '<span class="text-accent">&#10060;</span> &ldquo;분석해줘&rdquo;',
+                '<span class="text-accent">&#9989;</span> &ldquo;<strong>차트 포함한 보고서.html</strong> 만들어줘&rdquo;',
               ],
             ]}
           />
@@ -629,15 +724,15 @@ Gmail 자동화 해줘.
           <div className="space-y-2">
             <div className="bg-purple-50 rounded-lg px-4 py-2 text-sm">
               <span className="font-medium text-purple-700">1차:</span>{" "}
-              <span className="text-body">&quot;sales.csv 읽어서 부서별 집계표 만들어줘&quot;</span>
+              <span className="text-body">&ldquo;sales.csv 읽어서 부서별 집계표 만들어줘&rdquo;</span>
             </div>
             <div className="bg-purple-50 rounded-lg px-4 py-2 text-sm">
               <span className="font-medium text-purple-700">2차:</span>{" "}
-              <span className="text-body">&quot;다시 해줘, 이번엔 차트도 추가해&quot;</span>
+              <span className="text-body">&ldquo;다시 해줘, 이번엔 차트도 추가해&rdquo;</span>
             </div>
             <div className="bg-purple-50 rounded-lg px-4 py-2 text-sm">
               <span className="font-medium text-purple-700">3차:</span>{" "}
-              <span className="text-body">&quot;차트 색상을 파란색 계열로 바꿔줘&quot;</span>
+              <span className="text-body">&ldquo;차트 색상을 파란색 계열로 바꿔줘&rdquo;</span>
             </div>
           </div>
         </div>
@@ -649,7 +744,7 @@ Gmail 자동화 해줘.
             [파일/상황] + [원하는 처리] + [결과물 형식/파일명]
           </p>
           <p className="text-center text-caption text-sm mt-3">
-            예: &quot;sales.csv를 읽어서 부서별 매출 집계하고 요약.xlsx로 저장해줘&quot;
+            예: &ldquo;sales.csv를 읽어서 부서별 매출 집계하고 요약.xlsx로 저장해줘&rdquo;
           </p>
         </div>
       </section>
@@ -715,7 +810,7 @@ Gmail 자동화 해줘.
           <ul className="space-y-2 mt-1">
             <li>
               <strong>Google 로그인 창이 떠요</strong> &mdash; 처음 실행 시 브라우저에서 Google 로그인 화면이 열려요.
-              &quot;허용&quot;을 클릭하세요. &quot;확인되지 않은 앱&quot; 경고가 나오면 &quot;고급&quot; &rarr; &quot;계속&quot;을 누르세요.
+              &ldquo;허용&rdquo;을 클릭하세요. &ldquo;확인되지 않은 앱&rdquo; 경고가 나오면 &ldquo;고급&rdquo; &rarr; &ldquo;계속&rdquo;을 누르세요.
             </li>
             <li>
               <strong>y/n 선택은 원하는 대로</strong> &mdash; 답장 초안이 마음에 들면 y, 아니면 n을 누르세요.
@@ -756,7 +851,7 @@ Gmail 자동화 해줘.
           </p>
           <p className="mt-2">
             그래도 안 되면 Claude Code에게 이렇게 물어보세요:{" "}
-            <strong>&quot;에러 원인을 찾아서 해결해줘&quot;</strong>
+            <strong>&ldquo;에러 원인을 찾아서 해결해줘&rdquo;</strong>
           </p>
         </Callout>
       </section>
@@ -821,7 +916,7 @@ Register-ScheduledTask \`
         <Callout type="info" title="스케줄 등록도 Claude Code에게 맡기세요">
           <p>
             위 설정이 복잡하게 느껴진다면, 그냥 Claude Code에게
-            &quot;매일 아침 9시에 자동 실행되게 해줘&quot;라고 말하면 돼요.
+            &ldquo;매일 아침 9시에 자동 실행되게 해줘&rdquo;라고 말하면 돼요.
             OS를 자동으로 감지해서 알아서 등록해줘요.
           </p>
         </Callout>

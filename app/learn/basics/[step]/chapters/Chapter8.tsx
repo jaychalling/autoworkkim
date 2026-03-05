@@ -8,94 +8,14 @@ import OsTabs from "@/components/learn/OsTabs";
 export default function Chapter8() {
   return (
     <>
-      {/* ── 상황 인식 ── */}
-      <section id="situation">
-        <h2>매일 반복하는 웹 작업들</h2>
-
-        <p>
-          직장 생활하면서 이런 경험, 한 번쯤 있으시죠?
-        </p>
-
-        <div className="grid gap-3 my-6">
-          {[
-            { icon: "🔍", text: "매일 같은 사이트에 들어가서 데이터 확인" },
-            { icon: "📋", text: "웹 페이지에서 숫자를 복사해서 엑셀에 붙여넣기" },
-            { icon: "🔐", text: "Google 로그인할 때마다 인증 절차 반복" },
-            { icon: "📸", text: "경쟁사 사이트를 열어서 가격 변동 확인" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 bg-accent-light border border-accent/30 rounded-xl px-4 py-3"
-            >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
-              <span className="text-body">{item.text}</span>
-            </div>
-          ))}
-        </div>
-
-        <p>
-          이런 작업들, 사실 AI한테 시키면 돼요.
-          &ldquo;이 사이트 열어서 저 데이터 가져와줘&rdquo; 한마디면 끝이거든요.
-          그런데 한 가지 문제가 있어요 &mdash; Claude Code는 기본적으로 <strong>브라우저가 없어요</strong>.
-          터미널에서 동작하니까요.
-        </p>
-
-        <p>
-          그래서 필요한 게 바로 <strong>Playwright</strong>예요.
-          Claude Code에게 브라우저를 달아주는 거죠.
-        </p>
-
-        <Callout type="info" title="이 실습이 먼저인 이유">
-          <p>
-            다음 Step에서 Gmail 자동화를 할 때 Google 인증이 필요해요.
-            Playwright가 있으면 이 인증을 브라우저에서 자동으로 처리할 수 있거든요.
-            그래서 Playwright를 먼저 설치해두는 거예요.
-          </p>
-        </Callout>
-      </section>
-
-      {/* ── Playwright란? ── */}
-      <section id="what-is-playwright">
-        <h2>Playwright란?</h2>
-
-        <p>
-          Playwright는 Microsoft가 만든 <strong>브라우저 자동화 도구</strong>예요.
-          쉽게 말하면, 사람이 브라우저에서 하는 모든 동작 &mdash;
-          클릭, 타이핑, 스크롤, 스크린샷 &mdash; 을 코드로 대신 해주는 로봇이에요.
-        </p>
-
-        <CompareTable
-          headers={["비교", "사람이 직접", "Playwright"]}
-          rows={[
-            ["브라우저 열기", "더블클릭으로 크롬 실행", "코드 한 줄로 자동 실행"],
-            ["로그인", "아이디/비밀번호 직접 입력", "저장된 정보로 자동 입력"],
-            ["데이터 복사", "눈으로 찾아서 Ctrl+C", "CSS 선택자로 정확히 추출"],
-            ["스크린샷", "캡처 프로그램 실행", "원하는 시점에 자동 저장"],
-            ["반복 작업", "매일 수동으로 반복", "한 번 만들면 자동 반복"],
-          ]}
-        />
-
-        <p>
-          핵심은 이거예요 &mdash; <strong>여러분이 코드를 짤 필요가 없어요</strong>.
-          Claude Code에게 &ldquo;네이버 뉴스 열어서 헤드라인 10개 가져와줘&rdquo;라고 하면,
-          Claude가 알아서 Playwright 코드를 짜서 실행해요.
-          여러분은 결과만 받으면 돼요.
-        </p>
-
-        <Callout type="tip">
-          <p>
-            Playwright를 설치한다는 건, Claude Code에게 &ldquo;눈&rdquo;을 달아주는 거예요.
-            파일만 다루던 AI가 이제 웹 세상도 볼 수 있게 되는 거죠.
-          </p>
-        </Callout>
-      </section>
-
       {/* ── 설치 ── */}
       <section id="install">
         <h2>Playwright 설치하기</h2>
 
         <p>
-          설치는 정말 간단해요. Claude Code에게 말하면 돼요.
+          Claude Code는 터미널에서 동작하기 때문에 기본적으로 브라우저가 없어요.
+          <strong>Playwright</strong>를 설치하면 AI가 웹 브라우저를 직접 조종할 수 있게 돼요.
+          설치는 한마디면 충분해요.
         </p>
 
         <CodeBlock title="Claude Code에 이렇게 말하세요">
@@ -147,7 +67,7 @@ export default function Chapter8() {
 
       {/* ── 첫 실행 ── */}
       <section id="first-run">
-        <h2>첫 실행: 웹 페이지 열어보기</h2>
+        <h2>첫 실행: 스크린샷 찍어보기</h2>
 
         <p>
           설치가 끝났으면 바로 테스트해봐요.
@@ -175,6 +95,54 @@ export default function Chapter8() {
           <p>
             혹시 에러가 나면 Claude Code에게 &ldquo;에러가 났어, 해결해줘&rdquo;라고 하세요.
             에이전틱 AI의 장점이 바로 이거예요 &mdash; 에러를 스스로 분석하고 수정해요.
+          </p>
+        </Callout>
+      </section>
+
+      {/* ── 이해하기: Playwright란? ── */}
+      <section id="what-is-playwright">
+        <h2>이해하기: Playwright란?</h2>
+
+        <p>
+          방금 스크린샷이 찍혔죠? 그 과정에서 무슨 일이 있었는지 알아볼게요.
+        </p>
+
+        <p>
+          Playwright는 Microsoft가 만든 <strong>브라우저 자동화 도구</strong>예요.
+          쉽게 말하면, 사람이 브라우저에서 하는 모든 동작 &mdash;
+          클릭, 타이핑, 스크롤, 스크린샷 &mdash; 을 코드로 대신 해주는 로봇이에요.
+        </p>
+
+        <CompareTable
+          headers={["비교", "사람이 직접", "Playwright"]}
+          rows={[
+            ["브라우저 열기", "더블클릭으로 크롬 실행", "코드 한 줄로 자동 실행"],
+            ["로그인", "아이디/비밀번호 직접 입력", "저장된 정보로 자동 입력"],
+            ["데이터 복사", "눈으로 찾아서 Ctrl+C", "CSS 선택자로 정확히 추출"],
+            ["스크린샷", "캡처 프로그램 실행", "원하는 시점에 자동 저장"],
+            ["반복 작업", "매일 수동으로 반복", "한 번 만들면 자동 반복"],
+          ]}
+        />
+
+        <p>
+          핵심은 이거예요 &mdash; <strong>여러분이 코드를 짤 필요가 없어요</strong>.
+          Claude Code에게 &ldquo;네이버 뉴스 열어서 헤드라인 10개 가져와줘&rdquo;라고 하면,
+          Claude가 알아서 Playwright 코드를 짜서 실행해요.
+          여러분은 결과만 받으면 돼요.
+        </p>
+
+        <Callout type="tip">
+          <p>
+            Playwright를 설치한다는 건, Claude Code에게 &ldquo;눈&rdquo;을 달아주는 거예요.
+            파일만 다루던 AI가 이제 웹 세상도 볼 수 있게 되는 거죠.
+          </p>
+        </Callout>
+
+        <Callout type="info" title="다음 Step과의 연결">
+          <p>
+            다음 Step에서 Gmail 자동화를 할 때 Google 인증이 필요해요.
+            Playwright가 있으면 이 인증을 브라우저에서 자동으로 처리할 수 있거든요.
+            그래서 Playwright를 먼저 설치해둔 거예요.
           </p>
         </Callout>
       </section>
