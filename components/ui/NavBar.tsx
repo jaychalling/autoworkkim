@@ -7,7 +7,7 @@ const links = [
   { href: "/learn", label: "무료 학습" },
   { href: "/docs", label: "가이드" },
   { href: "/tools", label: "도구" },
-  { href: "/vps", label: "VPS" },
+  { href: "/setup", label: "Easy클코" },
 ];
 
 export default function NavBar() {

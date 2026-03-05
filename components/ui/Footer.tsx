@@ -11,7 +11,7 @@ export default function Footer() {
           <Link href="/learn" className="hover:text-heading transition">학습</Link>
           <Link href="/docs" className="hover:text-heading transition">가이드</Link>
           <Link href="/tools" className="hover:text-heading transition">도구</Link>
-          <Link href="/vps" className="hover:text-heading transition">VPS</Link>
+          <Link href="/setup" className="hover:text-heading transition">Easy클코</Link>
         </div>
       </div>
     </footer>
