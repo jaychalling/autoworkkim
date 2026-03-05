@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
   managerkim-setup PowerShell client
@@ -25,17 +25,30 @@ $SEP = "---------------------------------------------"
 function Show-Status {
     param([string]$SessionName, [string]$Status)
     Clear-Host
+    Write-Host ""
     Write-Host $SEP
-    Write-Host "  managerkim-setup v1.0 (PowerShell)"
-    Write-Host "  server: $($RelayUrl -replace 'ws://','')"
-    Write-Host "  session: $SessionName"
-    Write-Host "  status: $Status"
+    Write-Host ""
+    Write-Host "    managerkim-setup v1.0" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "    $SessionName" -NoNewline -ForegroundColor White
+    Write-Host " 님이 접속 중입니다" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "    $Status"
+    Write-Host ""
     Write-Host $SEP
-    foreach ($entry in $script:LogBuffer) {
-        Write-Host "  $($entry.Icon) $($entry.Text)"
+    if ($script:LogBuffer.Count -gt 0) {
+        Write-Host ""
+        foreach ($entry in $script:LogBuffer) {
+            Write-Host "    $($entry.Icon) $($entry.Text)"
+        }
+        Write-Host ""
+        Write-Host $SEP
     }
-    Write-Host $SEP
-    Write-Host "  Ctrl+C to quit"
+    Write-Host ""
+    Write-Host "    * 이 창을 닫지 마세요" -ForegroundColor Yellow
+    Write-Host "    * 강사가 원격으로 설치를 진행합니다" -ForegroundColor Gray
+    Write-Host "    * 종료하려면 Ctrl+C" -ForegroundColor Gray
+    Write-Host ""
 }
 
 function Get-Timestamp {
@@ -44,7 +57,15 @@ function Get-Timestamp {
 
 # ── Prompt for name ─────────────────────────────────────────────
 if (-not $Name) {
-    $Name = Read-Host "Enter your name (e.g. student-1)"
+    Write-Host ""
+    Write-Host $SEP
+    Write-Host ""
+    Write-Host "    managerkim-setup" -ForegroundColor Cyan
+    Write-Host "    워크샵 원격 설치 클라이언트" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host $SEP
+    Write-Host ""
+    $Name = Read-Host "    이름을 입력하세요 (예: 홍길동)"
     if ([string]::IsNullOrWhiteSpace($Name)) {
         $Name = "student-$(Get-Date -Format 'fff')"
     }
@@ -57,7 +78,8 @@ try {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
     if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        Write-Host "Warning: not running as admin. Some installs may fail." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "    [!] 관리자 권한 없이 실행 중 (일부 설치가 실패할 수 있음)" -ForegroundColor Yellow
         Start-Sleep -Seconds 1
     }
 }
@@ -157,10 +179,6 @@ function Invoke-RelayCommand {
 }
 
 # ── Persistent receive ──────────────────────────────────────────
-# Key insight: CancellationToken cancellation ABORTS the WebSocket.
-# Instead: start ReceiveAsync with no cancellation, use Task.Wait(ms)
-# to poll. Keep the task alive between calls.
-
 $script:_recvTask = $null
 $script:_recvBuffer = $null
 $script:_recvSegment = $null
@@ -179,19 +197,16 @@ function Receive-WsMessage {
 
     if ($Ws.State -ne [System.Net.WebSockets.WebSocketState]::Open) { return $null }
 
-    # Start a new receive if none pending
     if ($null -eq $script:_recvTask) {
         $script:_recvBuffer = New-Object byte[] 65536
         $script:_recvSegment = New-Object System.ArraySegment[byte] -ArgumentList (,$script:_recvBuffer)
         $script:_recvTask = $Ws.ReceiveAsync($script:_recvSegment, [System.Threading.CancellationToken]::None)
     }
 
-    # Poll: did it complete within timeout?
     try {
         $completed = $script:_recvTask.Wait($TimeoutMs)
     }
     catch {
-        # Connection broke
         $inner = $_.Exception
         while ($inner.InnerException) { $inner = $inner.InnerException }
         Reset-ReceiveState
@@ -199,11 +214,9 @@ function Receive-WsMessage {
     }
 
     if (-not $completed) {
-        # Still waiting — task stays alive for next call
         return $null
     }
 
-    # Task completed — read result, save buffer ref before reset
     $result = $script:_recvTask.Result
     $buf = $script:_recvBuffer
     Reset-ReceiveState
@@ -228,7 +241,7 @@ function Start-RelayClient {
         $ws = $null
         Reset-ReceiveState
         try {
-            Show-Status -SessionName $Name -Status "Connecting..."
+            Show-Status -SessionName $Name -Status "    [..] 서버에 연결하는 중..."
 
             $ws = New-Object System.Net.WebSockets.ClientWebSocket
             $ws.Options.KeepAliveInterval = [TimeSpan]::FromSeconds(30)
@@ -237,7 +250,6 @@ function Start-RelayClient {
 
             $ws.ConnectAsync($uri, $token).GetAwaiter().GetResult() | Out-Null
 
-            # Register
             Send-WsMessage -Ws $ws -Message @{
                 type        = "register"
                 name        = $Name
@@ -245,7 +257,7 @@ function Start-RelayClient {
                 nodeVersion = "powershell-$($PSVersionTable.PSVersion)"
             }
 
-            Show-Status -SessionName $Name -Status "Waiting..."
+            Show-Status -SessionName $Name -Status "    [OK] 연결 완료! 강사의 지시를 기다리는 중..."
 
             # Message loop
             while ($ws.State -eq [System.Net.WebSockets.WebSocketState]::Open) {
@@ -255,12 +267,10 @@ function Start-RelayClient {
                     if ($null -eq $msg) { continue }
 
                     if ($msg.type -eq "__close") { break }
-                    if ($msg.type -eq "__error") {
-                        break
-                    }
+                    if ($msg.type -eq "__error") { break }
 
                     if ($msg.type -eq "registered") {
-                        Show-Status -SessionName $Name -Status "Waiting..."
+                        Show-Status -SessionName $Name -Status "    [OK] 연결 완료! 강사의 지시를 기다리는 중..."
                         continue
                     }
 
@@ -270,13 +280,13 @@ function Start-RelayClient {
                             $cmdShort = $cmdShort.Substring(0, 40) + "..."
                         }
 
-                        Show-Status -SessionName $Name -Status "Running..."
-                        Write-Host "  >> [$(Get-Timestamp)] $cmdShort"
+                        Show-Status -SessionName $Name -Status "    [>>] 명령 실행 중... (잠시 기다려주세요)"
+                        Write-Host "    $(Get-Timestamp) $cmdShort" -ForegroundColor DarkGray
 
                         $result = Invoke-RelayCommand -Id $msg.id -Command $msg.command -Ws $ws
 
-                        $icon = "X"
-                        if ($result.ExitCode -eq 0) { $icon = "OK" }
+                        $icon = "[X]"
+                        if ($result.ExitCode -eq 0) { $icon = "[OK]" }
 
                         $resultShort = "exit $($result.ExitCode)"
                         $trimmed = "$($result.Output)".Trim()
@@ -291,7 +301,7 @@ function Start-RelayClient {
                             }
                         }
 
-                        $script:LogBuffer.Add(@{ Icon = ">> [$(Get-Timestamp)]"; Text = $cmdShort }) | Out-Null
+                        $script:LogBuffer.Add(@{ Icon = "$(Get-Timestamp)"; Text = $cmdShort }) | Out-Null
                         $script:LogBuffer.Add(@{ Icon = $icon; Text = $resultShort }) | Out-Null
 
                         Send-WsMessage -Ws $ws -Message @{
@@ -300,17 +310,17 @@ function Start-RelayClient {
                             exitCode = $result.ExitCode
                         }
 
-                        Show-Status -SessionName $Name -Status "Waiting..."
+                        Show-Status -SessionName $Name -Status "    [OK] 연결 완료! 강사의 지시를 기다리는 중..."
                     }
                 }
                 catch {
-                    Write-Host "  Loop error: $($_.Exception.Message)" -ForegroundColor Yellow
+                    Write-Host "    [!] 오류: $($_.Exception.Message)" -ForegroundColor Yellow
                 }
             }
         }
         catch {
             Write-Host ""
-            Write-Host "Connection error: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "    [!] 연결 오류: $($_.Exception.Message)" -ForegroundColor Red
         }
         finally {
             Reset-ReceiveState
@@ -324,7 +334,7 @@ function Start-RelayClient {
             }
         }
 
-        Write-Host "Reconnecting in 3 seconds..."
+        Write-Host "    3초 후 다시 연결합니다..." -ForegroundColor Gray
         Start-Sleep -Seconds 3
     }
 }
@@ -335,7 +345,7 @@ try {
 }
 catch {
     if ($_.Exception.GetType().Name -eq "PipelineStoppedException") {
-        Write-Host "`nExiting..."
+        Write-Host "`n    종료합니다..."
     }
     else {
         throw
