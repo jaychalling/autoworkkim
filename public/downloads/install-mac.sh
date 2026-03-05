@@ -201,11 +201,16 @@ else
     echo ""
 
     if [ "$TEST_MODE" = false ]; then
-        for i in 3 2 1; do
-            printf "\r    ${YELLOW}${i}초 후 설치를 시작합니다...  ${NC}"
-            sleep 1
-        done
-        printf "\r    ${GREEN}설치를 시작합니다!                       ${NC}\n"
+        printf "    설치를 진행할까요? (Y/n): "
+        read -r CONFIRM_REPLY
+        if [[ "$CONFIRM_REPLY" =~ ^[Nn] ]]; then
+            echo ""
+            echo -e "  ${YELLOW}설치를 취소했습니다.${NC}"
+            echo ""
+            exit 0
+        fi
+        echo ""
+        echo -e "    ${GREEN}설치를 시작합니다!${NC}"
         echo ""
     fi
 fi

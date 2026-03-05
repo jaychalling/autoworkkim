@@ -31,6 +31,7 @@ $script:Results = @{}
 $script:StepNumber = 0
 $script:TotalSteps = 7
 $script:WorkspaceDir = Join-Path $env:USERPROFILE "claude-workspace"
+$script:Cancelled = $false
 
 # --- 로그 파일 ---
 $script:LogFile = Join-Path $env:USERPROFILE "Desktop\easy-clco-install-log.txt"
@@ -247,12 +248,17 @@ function Show-EnvironmentScan {
         Write-Host ""
 
         if (-not $script:TestMode) {
-            for ($i = 3; $i -ge 1; $i--) {
-                Write-Host -NoNewline "`r    ${i}초 후 설치를 시작합니다...  " -ForegroundColor Yellow
-                Start-Sleep -Seconds 1
+            Write-Host -NoNewline "    설치를 진행할까요? (Y/n): " -ForegroundColor White
+            $reply = Read-Host
+            if ($reply -match "^[Nn]") {
+                Write-Host ""
+                Write-Host "  설치를 취소했습니다." -ForegroundColor Yellow
+                Write-Host ""
+                $script:Cancelled = $true
+                return
             }
-            Write-Host -NoNewline "`r    설치를 시작합니다!                 " -ForegroundColor Green
             Write-Host ""
+            Write-Host "    설치를 시작합니다!" -ForegroundColor Green
             Write-Host ""
         }
     }
@@ -945,6 +951,7 @@ function Main {
     }
 
     Show-EnvironmentScan
+    if ($script:Cancelled) { return }
 
     Install-Git           # 1. Git (필수)
     Install-ClaudeCode    # 2. Claude Code (네이티브 우선)
