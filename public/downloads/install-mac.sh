@@ -93,6 +93,7 @@ if [ "$TEST_MODE" = true ]; then
     echo -e "  ${MAGENTA}테스트 모드 — 감지만 수행하고 설치하지 않습니다${NC}"
 fi
 echo ""
+echo ""
 
 # ---------------------------------------------------------------------------
 # 셸 프로파일 소스 — 이미 설치된 도구가 PATH에 잡히도록
@@ -120,6 +121,96 @@ reload_shell() {
 }
 
 reload_shell
+
+# ===========================================================================
+# 환경 사전 분석 — 설치 전 현재 상태를 보여줌
+# ===========================================================================
+echo -e "${BOLD}  시스템을 분석하고 있습니다...${NC}"
+echo ""
+echo -e "  --- 환경 분석 -------------------------------------------"
+echo ""
+
+TO_INSTALL=()
+WORKSPACE_DIR="$HOME/claude-workspace"
+
+# Git
+printf "    %-18s" "Git"
+sleep 0.3
+if command -v git &>/dev/null; then
+    echo -e "${GREEN}OK  $(git --version)${NC}"
+else
+    echo -e "${RED}X   미설치 -> 설치 예정${NC}"
+    TO_INSTALL+=("Git")
+fi
+
+# Claude Code
+printf "    %-18s" "Claude Code"
+sleep 0.3
+if command -v claude &>/dev/null || [ -f "$HOME/.local/bin/claude" ]; then
+    VER=$(claude --version 2>/dev/null || echo "설치됨")
+    echo -e "${GREEN}OK  ${VER}${NC}"
+else
+    echo -e "${RED}X   미설치 -> 설치 예정${NC}"
+    TO_INSTALL+=("Claude Code")
+fi
+
+# Homebrew
+printf "    %-18s" "Homebrew"
+sleep 0.3
+if command -v brew &>/dev/null; then
+    echo -e "${GREEN}OK  $(brew --version 2>/dev/null | head -1)${NC}"
+else
+    echo -e "${RED}X   미설치 -> 설치 예정${NC}"
+    TO_INSTALL+=("Homebrew")
+fi
+
+# Node.js
+printf "    %-18s" "Node.js"
+sleep 0.3
+if command -v node &>/dev/null; then
+    echo -e "${GREEN}OK  $(node --version)${NC}"
+else
+    echo -e "${RED}X   미설치 -> 설치 예정${NC}"
+    TO_INSTALL+=("Node.js")
+fi
+
+# 작업 폴더
+printf "    %-18s" "작업 폴더"
+sleep 0.3
+if [ -d "$WORKSPACE_DIR" ]; then
+    echo -e "${GREEN}OK  $WORKSPACE_DIR${NC}"
+else
+    echo -e "${RED}X   없음 -> 생성 예정${NC}"
+    TO_INSTALL+=("작업 폴더")
+fi
+
+echo ""
+echo -e "  ---------------------------------------------------------"
+
+SCAN_FOUND=$((5 - ${#TO_INSTALL[@]}))
+SCAN_MISSING=${#TO_INSTALL[@]}
+
+if [ "$SCAN_MISSING" -eq 0 ]; then
+    echo ""
+    echo -e "  ${GREEN}${BOLD}모든 도구가 이미 설치되어 있습니다! 검증만 진행합니다.${NC}"
+    echo ""
+else
+    echo ""
+    echo -e "    ${SCAN_FOUND}개 감지됨  /  ${SCAN_MISSING}개 설치 필요"
+    echo -e "    ${YELLOW}설치 예정: $(IFS=', '; echo "${TO_INSTALL[*]}")${NC}"
+    echo ""
+
+    if [ "$TEST_MODE" = false ]; then
+        for i in 3 2 1; do
+            printf "\r    ${YELLOW}${i}초 후 설치를 시작합니다...  ${NC}"
+            sleep 1
+        done
+        printf "\r    ${GREEN}설치를 시작합니다!                       ${NC}\n"
+        echo ""
+    fi
+fi
+
+echo ""
 
 # ===========================================================================
 # 1단계: Git (Claude Code 필수 의존성)

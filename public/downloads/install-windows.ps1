@@ -72,7 +72,6 @@ function Write-SystemInfo {
 }
 
 function Show-Header {
-    Clear-Host
     Write-Host ""
     Write-Host "  ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
     Write-Host "  ║                                                        ║" -ForegroundColor Cyan
@@ -84,8 +83,6 @@ function Show-Header {
     Write-Host ""
     if ($script:TestMode) {
         Write-Host "  테스트 모드 — 감지만 수행하고 설치하지 않습니다" -ForegroundColor Magenta
-    } else {
-        Write-Host "  총 ${script:TotalSteps}단계를 진행합니다. 잠시만 기다려 주세요..." -ForegroundColor Gray
     }
     Write-Host ""
 }
@@ -160,6 +157,105 @@ function Find-WezTermExe {
         return (Get-Command "wezterm-gui" -ErrorAction SilentlyContinue).Source
     }
     return $null
+}
+
+# =============================================================================
+# 환경 사전 분석 — 설치 전 현재 상태를 보여줌
+# =============================================================================
+
+function Show-EnvironmentScan {
+    Write-Host "  시스템을 분석하고 있습니다..." -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  ─── 환경 분석 ──────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host ""
+
+    $script:ToInstall = @()
+
+    # Git
+    $label = "Git".PadRight(18)
+    Write-Host -NoNewline "    $label" -ForegroundColor White
+    Start-Sleep -Milliseconds 300
+    if (Test-CommandExists "git") {
+        $v = & git --version 2>$null
+        Write-Host "OK  $v" -ForegroundColor Green
+    } else {
+        Write-Host "X   미설치 -> 설치 예정" -ForegroundColor Red
+        $script:ToInstall += "Git"
+    }
+
+    # Claude Code
+    $label = "Claude Code".PadRight(18)
+    Write-Host -NoNewline "    $label" -ForegroundColor White
+    Start-Sleep -Milliseconds 300
+    $nativePath = Join-Path $env:USERPROFILE ".local\bin\claude.exe"
+    if ((Test-CommandExists "claude") -or (Test-Path $nativePath)) {
+        $v = if (Test-CommandExists "claude") { & claude --version 2>$null } else { "설치됨 (PATH 미등록)" }
+        Write-Host "OK  $v" -ForegroundColor Green
+    } else {
+        Write-Host "X   미설치 -> 설치 예정" -ForegroundColor Red
+        $script:ToInstall += "Claude Code"
+    }
+
+    # Node.js
+    $label = "Node.js".PadRight(18)
+    Write-Host -NoNewline "    $label" -ForegroundColor White
+    Start-Sleep -Milliseconds 300
+    if (Test-CommandExists "node") {
+        $v = & node --version 2>$null
+        Write-Host "OK  $v" -ForegroundColor Green
+    } else {
+        Write-Host "X   미설치 -> 설치 예정" -ForegroundColor Red
+        $script:ToInstall += "Node.js"
+    }
+
+    # WezTerm
+    $label = "WezTerm".PadRight(18)
+    Write-Host -NoNewline "    $label" -ForegroundColor White
+    Start-Sleep -Milliseconds 300
+    if (Find-WezTermExe) {
+        Write-Host "OK  설치됨" -ForegroundColor Green
+    } else {
+        Write-Host "X   미설치 -> 설치 예정" -ForegroundColor Red
+        $script:ToInstall += "WezTerm"
+    }
+
+    # 작업 폴더
+    $label = "작업 폴더".PadRight(16)
+    Write-Host -NoNewline "    $label" -ForegroundColor White
+    Start-Sleep -Milliseconds 300
+    if (Test-Path $script:WorkspaceDir) {
+        Write-Host "OK  $($script:WorkspaceDir)" -ForegroundColor Green
+    } else {
+        Write-Host "X   없음 -> 생성 예정" -ForegroundColor Red
+        $script:ToInstall += "작업 폴더"
+    }
+
+    Write-Host ""
+    Write-Host "  ─────────────────────────────────────────────────────" -ForegroundColor DarkGray
+
+    $found = 5 - $script:ToInstall.Count
+    $missing = $script:ToInstall.Count
+
+    if ($missing -eq 0) {
+        Write-Host ""
+        Write-Host "  모든 도구가 이미 설치되어 있습니다! 검증만 진행합니다." -ForegroundColor Green
+        Write-Host ""
+    } else {
+        Write-Host ""
+        Write-Host "    ${found}개 감지됨  /  ${missing}개 설치 필요" -ForegroundColor White
+        Write-Host "    설치 예정: $($script:ToInstall -join ', ')" -ForegroundColor Yellow
+        Write-Host ""
+
+        if (-not $script:TestMode) {
+            for ($i = 3; $i -ge 1; $i--) {
+                Write-Host -NoNewline "`r    ${i}초 후 설치를 시작합니다...  " -ForegroundColor Yellow
+                Start-Sleep -Seconds 1
+            }
+            Write-Host -NoNewline "`r    설치를 시작합니다!                 " -ForegroundColor Green
+            Write-Host ""
+            Write-Host ""
+        }
+    }
 }
 
 # =============================================================================
@@ -838,8 +934,6 @@ function Main {
     Write-SystemInfo
 
     Show-Header
-    Write-Host "  로그 파일: $($script:LogFile)" -ForegroundColor DarkGray
-    Write-Host ""
 
     $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
         [Security.Principal.WindowsBuiltInRole]::Administrator
@@ -849,6 +943,8 @@ function Main {
         Write-Host "  일부 설치에서 권한 상승 창(UAC)이 뜰 수 있습니다." -ForegroundColor Yellow
         Write-Host ""
     }
+
+    Show-EnvironmentScan
 
     Install-Git           # 1. Git (필수)
     Install-ClaudeCode    # 2. Claude Code (네이티브 우선)
