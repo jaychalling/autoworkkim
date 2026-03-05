@@ -944,7 +944,10 @@ function Main {
     $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
         [Security.Principal.WindowsBuiltInRole]::Administrator
     )
-    if (-not $isAdmin) {
+    if ($isAdmin) {
+        Write-Host "  ✅  관리자 권한으로 실행 중" -ForegroundColor Green
+        Write-Host ""
+    } else {
         Write-Host "  ⚠️  관리자 권한 없이 실행 중입니다." -ForegroundColor Yellow
         Write-Host "  일부 설치에서 권한 상승 창(UAC)이 뜰 수 있습니다." -ForegroundColor Yellow
         Write-Host ""
