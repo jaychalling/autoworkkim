@@ -6,7 +6,7 @@ import NavBar from "@/components/ui/NavBar";
 import Footer from "@/components/ui/Footer";
 
 const PASSWORD = "2026";
-const EASYCC_URL = "http://38.45.67.130:1664/download/easycc";
+const EASYCC_URL = "/download/easycc";
 
 function downloadBoth() {
   // First file
@@ -131,8 +131,8 @@ function StudentContent() {
             <div className="grid sm:grid-cols-3 gap-4 mt-6">
               {[
                 { icon: Download, step: "01", title: "다운로드", desc: "아래 버튼으로 EasyCC 받기" },
-                { icon: MousePointer, step: "02", title: "실행", desc: "압축 풀고 EasyCC.exe 실행" },
-                { icon: Monitor, step: "03", title: "대기", desc: "이름 입력 후 연결. 자동 설치됨" },
+                { icon: MousePointer, step: "02", title: "실행", desc: "EasyCC.exe 더블클릭" },
+                { icon: Monitor, step: "03", title: "연결", desc: "이름 입력 → 연결. 자동 설치됨" },
               ].map((item, i) => (
                 <div key={i} className="text-center bg-white rounded-xl p-4">
                   <div className="w-10 h-10 bg-subtle rounded-lg flex items-center justify-center mx-auto mb-2">
@@ -161,7 +161,7 @@ function StudentContent() {
                 <Download size={20} />
                 EasyCC 다운로드
               </a>
-              <span className="text-sm text-caption">Windows 전용 &middot; ZIP 파일 (약 111MB)</span>
+              <span className="text-sm text-caption">Windows 전용 &middot; 실행 파일 (약 72MB)</span>
             </div>
           </div>
 
@@ -176,18 +176,7 @@ function StudentContent() {
               <li className="flex items-start gap-4">
                 <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">1</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-heading mb-2">다운로드된 ZIP 파일 압축 풀기</p>
-                  <p className="text-sm text-body">
-                    <code className="bg-subtle px-1.5 py-0.5 rounded text-sm font-mono">EasyCC.zip</code>을
-                    우클릭 &rarr; <strong>&ldquo;모두 압축 풀기&rdquo;</strong> 하세요.
-                  </p>
-                </div>
-              </li>
-
-              <li className="flex items-start gap-4">
-                <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">2</span>
-                <div className="flex-1">
-                  <p className="font-semibold text-heading mb-2">EasyCC.exe 더블클릭</p>
+                  <p className="font-semibold text-heading mb-2">다운로드된 EasyCC.exe 더블클릭</p>
                   <p className="text-sm text-body mb-2">
                     파란 보안 경고가 뜨면 <strong>&ldquo;추가 정보&rdquo;</strong> &rarr; <strong>&ldquo;실행&rdquo;</strong>을 클릭하세요.
                   </p>
@@ -195,7 +184,7 @@ function StudentContent() {
               </li>
 
               <li className="flex items-start gap-4">
-                <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">3</span>
+                <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">2</span>
                 <div className="flex-1">
                   <p className="font-semibold text-heading mb-2">이름 입력 후 &ldquo;연결&rdquo; 클릭</p>
                   <p className="text-sm text-body mb-2">
@@ -206,7 +195,7 @@ function StudentContent() {
               </li>
 
               <li className="flex items-start gap-4">
-                <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">4</span>
+                <span className="w-7 h-7 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold mt-0.5">3</span>
                 <div className="flex-1">
                   <p className="font-semibold text-heading mb-2">창을 닫지 마세요!</p>
                   <p className="text-sm text-body">
